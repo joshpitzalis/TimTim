@@ -10,7 +10,8 @@
     "check": "pnpm typecheck && pnpm lint",
     "typecheck": "void prepare && tsc --noEmit",
     "lint": "oxlint --deny-warnings",
-    "test": "pnpm test:fence && pnpm test:browser",
+    "test": "pnpm test:fence && pnpm test:content && pnpm test:browser",
+    "test:content": "vitest run",
     "test:browser": "playwright test",
     "prepare": "effect-tsgo patch && lefthook install",
     "test:fence": "node --test tests/fence.test.mjs"

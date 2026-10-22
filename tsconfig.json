@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "types": [
       "void/env",
-      "node"
+      "node",
+      "vite/client"
     ],
     "jsx": "react-jsx",
     "noUncheckedIndexedAccess": true,
