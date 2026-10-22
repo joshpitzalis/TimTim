@@ -124,6 +124,6 @@ The generated `dev`, `build`, `preview`, and `postinstall` commands are retained
 
 `prepare` patches the pinned TypeScript 7.0.2 compiler using compatible `@effect/tsgo` 0.56.0 and installs Lefthook. Every commit runs check and test; CI installs from the frozen lockfile, installs Chromium, then runs check, test, and build. Do not bypass hooks. The fence regression test temporarily introduces invalid types, a floating Effect, and forbidden imports, requires each to fail, and removes the probes afterward.
 
-Oxlint's `jsx-a11y/prefer-tag-over-role` is disabled because it incorrectly demands that the accessible SVG writing pad become an HTML image; the pad needs SVG geometry and an explicit image role. Other accessibility correctness rules remain enabled. The initial shell is deliberately unstyled and provides no tracing or grading yet.
+Oxlint's `jsx-a11y/prefer-tag-over-role` has one line-specific exception because it incorrectly demands that the accessible SVG writing pad become an HTML image; the pad needs SVG geometry and an explicit image role. Other accessibility correctness rules remain enabled. The initial shell is deliberately unstyled and provides no tracing or grading yet.
 
 A browser smoke check at phone and desktop viewport sizes proves that the local shell loads and the pad stays square. This is emulation, not physical-device validation. No deployment or real-phone verification has been performed.

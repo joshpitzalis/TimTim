@@ -33,6 +33,17 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       assert.notEqual(result.status, 0, "domain platform imports must fail");
       assert.match(result.stdout + result.stderr, /no-platform-in-domain/);
     }
+    for (const source of ["export const platform = window;", "export const platform = document;"]) {
+      writeFileSync(probe, source);
+      result = lint();
+      assert.notEqual(result.status, 0, "domain browser globals must fail");
+      assert.match(result.stdout + result.stderr, /no-restricted-globals/);
+    }
+    const browserProbe = join(directory, "browser", "probe.ts");
+    writeFileSync(browserProbe, 'import { defineHandler } from "void"; export const handler = defineHandler;');
+    result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", browserProbe], { encoding: "utf8" });
+    assert.notEqual(result.status, 0, "browser imports of the server entry must fail");
+    assert.match(result.stdout + result.stderr, /no-platform-in-domain/);
     writeFileSync(probe, "export const points: number = 3;\n");
     execFileSync("./node_modules/.bin/tsc", ["--noEmit", "--project", join(directory, "tsconfig.json")]);
     result = lint();

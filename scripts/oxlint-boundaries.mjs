@@ -24,7 +24,7 @@ export default {
           const forbidden = domain
             ? provider || target.includes("/browser/") || target.includes("/pages/") || platform || (!name.startsWith(".") && name !== "effect" && !name.startsWith("effect/"))
             : (browser || page)
-              ? provider || name.startsWith("node:") || /^void\/(?:env|db|auth|sandbox)(?:\/|$)/.test(name)
+              ? provider || name === "void" || name.startsWith("node:") || /^void\/(?:env|db|auth|sandbox)(?:\/|$)/.test(name)
               : (filename.includes("/routes/") || filename.includes("/providers/")) && target.includes("/browser/");
           if (forbidden) context.report({ node, messageId: "forbidden" });
         }

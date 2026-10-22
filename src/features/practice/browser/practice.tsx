@@ -3,8 +3,8 @@ export function Practice() {
     <main>
       <h1>Strokes</h1>
       <p id="practice-instructions">Practice Hindi handwriting with your finger, pen, or mouse.</p>
-      <svg
-        role="img"
+      {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG needs an image role while retaining drawing geometry. */}
+      <svg role="img"
         aria-label="Hindi writing practice area"
         aria-describedby="practice-instructions"
         viewBox="0 0 100 100"
