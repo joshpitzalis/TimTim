@@ -1,0 +1,58 @@
+{
+  "evidence_id": "ev_ac4cc745a3f06625034762dfdcc80b0b49437d7c2367df61f361a94018d9353b",
+  "operation": "analyze_javascript_application",
+  "provider": {
+    "id": "rea-javascript-application",
+    "name": "REA JavaScript application analyzer",
+    "version": "1"
+  },
+  "parameters": {
+    "format": "auto",
+    "integrity_policy": "fail",
+    "source_paths": [
+      "application.js"
+    ],
+    "analysis_timeout_ms": 90000
+  },
+  "subject": {
+    "name": "skritter-inspection",
+    "digest": {
+      "sha256": "b8f588d69659347aefcf9072d4d02f1df9da27534bcea957a57f1a84a95e246b"
+    },
+    "local_path": "/private/tmp/skritter-inspection",
+    "format": "directory",
+    "architecture": null
+  },
+  "statistics": {
+    "relevant_files": 3,
+    "nested_asar_containers": 0,
+    "text_bytes_read": 1920522,
+    "invalid_utf8_files": 0,
+    "parsed_javascript_files": 1,
+    "skipped_javascript_files": 0,
+    "visited_ast_nodes": 401723,
+    "findings": 1271,
+    "modules": 0,
+    "parse_failures": 0
+  },
+  "limitations": [
+    "Caller-selected source analysis leaves 2 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+  ],
+  "source_urls": {
+    "application.js": "https://skritter.com/js/application.js",
+    "libraries.js": "https://skritter.com/js/libraries.js",
+    "startup.js": "https://skritter.com/js/startup.js"
+  },
+  "downloaded_sha256": {
+    "libraries.js": "19b262cf3be1a7f3a1be199532262eab3580377f4834cd4a5c47e391525aaf55",
+    "startup.js": "c982d435012dda8c6a8e990cd85aac6a74b388f1e37c06c578c3f4bfb61f08f5",
+    "application.js": "8933badb04686e9d3aef97b1ef8b22bf030021868617403241b08aeda2c730e5"
+  },
+  "full_evidence_path": "/private/tmp/skritter-rea-evidence.json"
+}
