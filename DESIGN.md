@@ -10,6 +10,9 @@ colors:
   muted: "#526079"
   rule: "#c9d3e3"
   guide: "#c6d2f6"
+  grid: "#dce3ee"
+  primary-soft: "#e3e9ff"
+  primary-pressed: "#d3ddff"
 typography:
   body:
     fontFamily: "system-ui, sans-serif"
@@ -17,15 +20,54 @@ typography:
     lineHeight: 1.5
   title:
     fontFamily: "system-ui, sans-serif"
-    fontSize: "2rem"
-    fontWeight: 650
+    fontSize: "1.75rem"
+    fontWeight: 700
     lineHeight: 1.15
+  title-phone:
+    fontSize: "1.5rem"
+  pronunciation:
+    fontSize: "2rem"
+    lineHeight: 1.15
+  section:
+    fontSize: "1.125rem"
+    fontWeight: 650
+    lineHeight: 1.35
+  feedback:
+    fontSize: "0.9375rem"
+  small:
+    fontSize: "0.875rem"
+  caption:
+    fontSize: "0.75rem"
+  glyph:
+    fontSize: "4rem"
+    lineHeight: 1
+  glyph-phone:
+    fontSize: "3.5rem"
+    lineHeight: 1
 rounded:
   control: "8px"
+  notice: "6px"
 spacing:
   small: "8px"
   group: "16px"
   section: "32px"
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.control}"
+    padding: "10px 16px"
+  button-primary-hover:
+    backgroundColor: "{colors.primary-deep}"
+  button-secondary:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.primary}"
+    rounded: "{rounded.control}"
+    padding: "10px 16px"
+  button-secondary-hover:
+    backgroundColor: "{colors.primary-soft}"
+  button-secondary-active:
+    backgroundColor: "{colors.primary-pressed}"
 ---
 
 # Design System: Strokes
@@ -42,11 +84,11 @@ White owns the writing surface; a cool neutral ground separates the workspace fr
 
 ## Typography
 
-Use system sans for controls and instructions, with readable fixed rem sizes. The lesson glyph and reference paths carry the visual identity. Use the platform Devanagari fallback for the glyph label; the actual teaching paths are authored SVG geometry, never a font outline.
+Use system sans for controls and instructions, with readable fixed rem sizes. Pronunciation uses the title size on phones. The lesson glyph and reference paths carry the visual identity. Use the platform Devanagari fallback for the glyph label; the actual teaching paths are authored SVG geometry, never a font outline. Numbered SVG hints use four lesson-coordinate units, scaling with the drawing frame.
 
 ## Layout
 
-The square writing surface leads. A compact lesson header precedes it; instructions and labeled controls remain adjacent. On wide screens, an instruction rail sits beside the larger drawing frame. On phones, the rail moves below the pad and controls stay reachable. Avoid a dashboard, lesson catalog, or decorative card grid.
+The square writing surface leads. A compact lesson header precedes it; instructions and labeled controls remain adjacent. On wide screens, an instruction rail sits beside the drawing frame. At the phone breakpoint (760px), the rail moves below the pad and controls stay reachable. Avoid a dashboard, lesson catalog, or decorative card grid.
 
 ## Elevation & Depth
 
@@ -58,7 +100,7 @@ Keep the pad geometrically square with modest corner treatment. Controls have co
 
 ## Components
 
-The pad is a real SVG with a shared lesson coordinate system. Reference geometry is faint; learner ink is cobalt. Reveal exposes numbered directed reference strokes without accepting input. Buttons use text labels, visible focus, hover and pressed states. Feedback uses readable text with a stable position to avoid layout movement during drawing.
+The pad is a real SVG with a shared lesson coordinate system. Reference geometry is faint; learner ink is cobalt. Reveal exposes numbered directed reference strokes without marking a stroke accepted or completing practice; the learner may trace over the revealed reference. Buttons use text labels, visible focus, hover and pressed states. They have a minimum touch height of 48px; preparation disables them visibly. Feedback uses readable text with a stable position to avoid layout movement during drawing.
 
 ## Do's and Don'ts
 

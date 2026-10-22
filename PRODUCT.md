@@ -28,7 +28,7 @@ The writing surface must work on a phone, allow page scrolling outside the pad, 
 
 ## Brand Commitments
 
-The learner-facing product name is Strokes. TimTim names the repository. No visual identity is established yet.
+The learner-facing product name is Strokes. TimTim names the repository. The owner delegated the visual direction on 2026-10-22; DESIGN.md records the selected drawing-frame system.
 
 ## Evidence on Hand
 
