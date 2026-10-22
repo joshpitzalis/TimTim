@@ -39,11 +39,24 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       assert.notEqual(result.status, 0, "domain browser globals must fail");
       assert.match(result.stdout + result.stderr, /no-restricted-globals/);
     }
-    const browserProbe = join(directory, "browser", "probe.ts");
-    writeFileSync(browserProbe, 'import { defineHandler } from "void"; export const handler = defineHandler;');
-    result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", browserProbe], { encoding: "utf8" });
-    assert.notEqual(result.status, 0, "browser imports of the server entry must fail");
-    assert.match(result.stdout + result.stderr, /no-platform-in-domain/);
+    mkdirSync(join(directory, "pages"));
+    for (const folder of ["browser", "pages"]) {
+      const browserProbe = join(directory, folder, "probe.ts");
+      for (const name of ["void", "fs", "fs/promises", "path", "child_process", "node:fs", "void/handler", "void/kv", "void/storage", "@void/react/pages-server", "@void/react/plugin"]) {
+        writeFileSync(browserProbe, `import * as dependency from "${name}"; export const value = dependency;`);
+        result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", browserProbe], { encoding: "utf8" });
+        assert.notEqual(result.status, 0, `${folder} server import ${name} must fail`);
+        assert.match(result.stdout + result.stderr, /no-platform-in-domain/);
+      }
+      for (const name of ["react", "@void/react", "@void/react/pages-client", "void/client", "void/client/react", "void/sse/client", "void/live/client", "void/pages-client", "void/pages-prefetch"]) {
+        writeFileSync(browserProbe, `import * as dependency from "${name}"; export const value = dependency;`);
+        result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", browserProbe], { encoding: "utf8" });
+        assert.equal(result.status, 0, `${folder} browser import ${name} must pass: ${result.stdout}${result.stderr}`);
+      }
+    }
+    writeFileSync(probe, 'import { Effect } from "effect"; export const value = Effect.succeed(1);');
+    result = lint();
+    assert.equal(result.status, 0, result.stdout + result.stderr);
     writeFileSync(probe, "export const points: number = 3;\n");
     execFileSync("./node_modules/.bin/tsc", ["--noEmit", "--project", join(directory, "tsconfig.json")]);
     result = lint();

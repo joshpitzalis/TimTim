@@ -1,4 +1,11 @@
+import { isBuiltin } from "node:module";
 import { dirname, resolve } from "node:path";
+
+const browserVoidImports = new Set([
+  "void/client", "void/client/react", "void/client/vue", "void/client/svelte", "void/client/solid",
+  "void/sse/client", "void/live/client", "void/pages-client", "void/pages-prefetch",
+  "@void/react", "@void/react/pages-client",
+]);
 
 export default {
   meta: { name: "strokes-boundaries" },
@@ -24,7 +31,7 @@ export default {
           const forbidden = domain
             ? provider || target.includes("/browser/") || target.includes("/pages/") || platform || (!name.startsWith(".") && name !== "effect" && !name.startsWith("effect/"))
             : (browser || page)
-              ? provider || name === "void" || name.startsWith("node:") || /^void\/(?:env|db|auth|sandbox)(?:\/|$)/.test(name)
+              ? provider || isBuiltin(name) || name.startsWith("node:") || ((name === "void" || name.startsWith("void/") || name.startsWith("@void/")) && !browserVoidImports.has(name))
               : (filename.includes("/routes/") || filename.includes("/providers/")) && target.includes("/browser/");
           if (forbidden) context.report({ node, messageId: "forbidden" });
         }
