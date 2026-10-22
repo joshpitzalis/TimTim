@@ -1,3 +1,6 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { Practice } from "../../src/features/practice/browser/practice";
 import { expect, test } from "vitest";
 import { parseLesson } from "../../src/features/practice/domain/lesson";
 import { DEVELOPMENT_LESSON } from "../../src/features/practice/domain/development-lesson";
@@ -38,4 +41,16 @@ test("the content boundary preserves the authored teaching order", () => {
   expect(result.kind).toBe("ready");
   if (result.kind !== "ready") throw new Error("Authored sequence did not parse");
   expect(result.lesson.strokes.map((stroke) => stroke.points[0])).toEqual([{ x: 70, y: 20 }, { x: 10, y: 30 }]);
+});
+
+
+test("invalid content renders a distinct failure without learner controls or completion", () => {
+  const markup = renderToStaticMarkup(createElement(Practice, { content: parseLesson({ ...DEVELOPMENT_LESSON, strokes: [] }) }));
+  expect(markup).toContain('role="alert"');
+  expect(markup).toContain("Lesson unavailable");
+  expect(markup).toContain("Its content needs repair.");
+  expect(markup).not.toContain("Hindi writing practice area");
+  expect(markup).not.toContain("<svg");
+  expect(markup).not.toContain("<button");
+  expect(markup).not.toMatch(/Retry|completed|Ready to trace|stroke drawn/i);
 });

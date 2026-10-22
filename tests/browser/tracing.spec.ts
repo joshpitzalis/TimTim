@@ -1,7 +1,7 @@
 import { test, expect } from "./fixtures";
 import type { Locator } from "@playwright/test";
 
-async function inkPixels(pad: Locator): Promise<number> {
+async function inkScreenshot(pad: Locator): Promise<{ readonly count: number; readonly bounds: { readonly left: number; readonly top: number; readonly right: number; readonly bottom: number } }> {
   const png = (await pad.screenshot()).toString("base64");
   return pad.evaluate(async (_element, encoded) => {
     const response = await fetch(`data:image/png;base64,${encoded}`);
@@ -15,14 +15,24 @@ async function inkPixels(pad: Locator): Promise<number> {
     bitmap.close();
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
     let count = 0;
+    let left = canvas.width, top = canvas.height, right = 0, bottom = 0;
     for (let index = 0; index < pixels.length; index += 4) {
       const red = pixels[index] ?? 255;
       const green = pixels[index + 1] ?? 255;
       const blue = pixels[index + 2] ?? 0;
-      if (blue > red * 1.5 && blue > green * 1.5) count++;
+      if (blue > red * 1.5 && blue > green * 1.5) {
+        count++;
+        const x = index / 4 % canvas.width, y = Math.floor(index / 4 / canvas.width);
+        left = Math.min(left, x); top = Math.min(top, y);
+        right = Math.max(right, x); bottom = Math.max(bottom, y);
+      }
     }
-    return count;
+    return { count, bounds: { left: left / canvas.width, top: top / canvas.height, right: right / canvas.width, bottom: bottom / canvas.height } };
   }, png);
+}
+
+async function inkPixels(pad: Locator): Promise<number> {
+  return (await inkScreenshot(pad)).count;
 }
 
 test.use({ viewport: { width: 1200, height: 1200 } });
@@ -59,7 +69,7 @@ test("Reveal exposes ordered direction hints without checking or completing, and
   await expect(reveal).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("listitem")).toHaveCount(3);
   await expect(page.getByText("Tracing only. Your writing is not checked or scored.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("status")).toContainText("Ready to trace");
+  await expect(page.getByRole("status")).toHaveText("Reference shown. Trace along it, or choose Retry for the faint guide.");
   for (let repeat = 0; repeat < 2; repeat++) {
     await page.getByRole("button", { name: "Retry", exact: true }).click();
     await expect(reveal).toHaveAttribute("aria-pressed", "false");
@@ -81,7 +91,8 @@ for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout 
     await page.mouse.move(start.x + 70, start.y + 50, { steps: 5 });
     await page.mouse.up();
     await expect(page.getByRole("status")).toContainText("1 stroke drawn");
-    const finished = await inkPixels(pad);
+    const finishedInk = await inkScreenshot(pad);
+    const finished = finishedInk.count;
     expect(finished).toBeGreaterThan(100);
     await pad.evaluate((element) => element.addEventListener("pointerdown", (event) => {
       if (event instanceof PointerEvent) element.setAttribute("data-test-pointer", String(event.pointerId));
@@ -97,7 +108,7 @@ for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout 
       await page.mouse.move(start.x + 180, start.y + 60);
     }
     if (interruption === "blur") await page.evaluate(() => window.dispatchEvent(new Event("blur")));
-    if (interruption === "resize") await page.setViewportSize({ width: 1000, height: 1200 });
+    if (interruption === "resize") await page.setViewportSize({ width: 390, height: 844 });
     if (interruption === "layout shift") {
       await pad.evaluate((element) => { element.style.transform = "translateY(20px)"; });
       await page.mouse.move(start.x + 180, start.y + 60);
@@ -114,6 +125,14 @@ for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout 
     }
     const nextBounds = await pad.boundingBox();
     if (!nextBounds) throw new Error("No resized pad");
+    if (interruption === "resize") {
+      expect(nextBounds.width).toBeLessThan(bounds.width * .8);
+      const resizedInk = await inkScreenshot(pad);
+      expect(resizedInk.count).toBeGreaterThan(50);
+      for (const edge of ["left", "top", "right", "bottom"] as const) {
+        expect(Math.abs(resizedInk.bounds[edge] - finishedInk.bounds[edge])).toBeLessThan(.01);
+      }
+    }
     await page.mouse.move(nextBounds.x + 30, nextBounds.y + 30);
     await page.mouse.down();
     await page.mouse.move(nextBounds.x + 80, nextBounds.y + 80, { steps: 4 });
@@ -142,4 +161,32 @@ test("other pointers do not interrupt capture, and releasing outside does not le
   await page.mouse.move(bounds.x + 140, bounds.y + 140, { steps: 5 });
   await page.mouse.up();
   await expect(page.getByRole("status")).toContainText("2 strokes drawn");
+});
+
+
+test("phone layout supports drawing, reset, and visible keyboard focus", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.getByRole("status")).toContainText("Ready to trace");
+  const pad = page.getByRole("img", { name: "Hindi writing practice area" });
+  const bounds = await pad.boundingBox();
+  if (!bounds) throw new Error("No phone pad");
+  expect(bounds.width).toBeLessThan(390);
+  await page.mouse.move(bounds.x + bounds.width * .2, bounds.y + bounds.height * .3);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x + bounds.width * .6, bounds.y + bounds.height * .7, { steps: 8 });
+  await page.mouse.up();
+  await expect(page.getByRole("status")).toContainText("1 stroke drawn");
+  expect(await inkPixels(pad)).toBeGreaterThan(100);
+  await page.keyboard.press("Tab");
+  const clear = page.getByRole("button", { name: "Clear", exact: true });
+  await expect(clear).toBeFocused();
+  expect(await clear.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe("solid");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("status")).toContainText("Ready to trace");
+  expect(await inkPixels(pad)).toBe(0);
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Reveal", exact: true })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeFocused();
 });

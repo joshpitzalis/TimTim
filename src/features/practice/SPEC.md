@@ -9,6 +9,7 @@ No completion, scoring, persistence, or pedagogical-validity claim belongs here 
 - `domain/development-lesson.ts` owns original directed reference geometry and hints.
 - `domain/lesson.ts` parses unknown content into a usable, branded lesson or a
   distinct content failure. Points must be finite, in bounds, and nondegenerate.
+- `pages/index.tsx` parses the checked-in content once and supplies its result.
 - `browser/practice.tsx` renders the letter, shared SVG coordinate frame, live ink,
   honest status, ordered Reveal hints, and labeled Clear/Retry controls.
 - `browser/use-drawing.ts` owns one captured pointer and temporary React state.
@@ -23,7 +24,7 @@ capture, blur, hidden document, and layout changes stop unfinished input safely.
 Clear and Retry reset ink and revealed hints. Reveal never accepts a stroke.
 Attempts remain in memory and disappear when the page is left or refreshed.
 
-`tests/content/lesson.test.ts` checks the content boundary and authored ordering.
+`tests/content/lesson.test.ts` checks parsing, authored ordering, and the unusable-content render.
 `tests/browser/tracing.spec.ts` checks public ink/status/control behavior and
 interruption recovery. Actual iPhone/Android and finger/stylus checks remain open.
 Stroke matching and calibration follow only after the lesson-review dependency.

@@ -1,21 +1,17 @@
 import { useId, useState } from "react";
-import { DEVELOPMENT_LESSON } from "../domain/development-lesson";
-import { parseLesson } from "../domain/lesson";
-import type { Lesson, Point } from "../domain/lesson";
+import type { Lesson, LessonContent, Point } from "../domain/lesson";
 import { useDrawing } from "./use-drawing";
 import "./practice.css";
-
-const CONTENT = parseLesson(DEVELOPMENT_LESSON);
 
 function pointsAttribute(points: readonly Point[]): string {
   return points.map((point) => `${point.x},${point.y}`).join(" ");
 }
 
-export function Practice() {
-  if (CONTENT.kind === "unusable") {
-    return <main className="practice-app"><h1>Strokes</h1><section role="alert"><h2>Lesson unavailable</h2><p>{CONTENT.message}</p><p>Your writing has not been checked. Reload the page to try again.</p></section></main>;
+export function Practice({ content }: { readonly content: LessonContent }) {
+  if (content.kind === "unusable") {
+    return <main className="practice-app"><h1>Strokes</h1><section role="alert"><h2>Lesson unavailable</h2><p>{content.message}</p><p>Your writing has not been checked. Reload the page to try again.</p></section></main>;
   }
-  return <TracingPractice lesson={CONTENT.lesson} />;
+  return <TracingPractice lesson={content.lesson} />;
 }
 
 function TracingPractice({ lesson }: { readonly lesson: Lesson }) {
@@ -25,7 +21,7 @@ function TracingPractice({ lesson }: { readonly lesson: Lesson }) {
   const { x, y, width, height } = lesson.bounds;
   const viewBox = `${x} ${y} ${width} ${height}`;
   const count = attempt.strokes.length;
-  let feedback = "Ready to trace. Follow the faint guide.";
+  let feedback = revealed ? "Reference shown. Trace along it, or choose Retry for the faint guide." : "Ready to trace. Follow the faint guide.";
   if (count > 0) feedback = `${count} ${count === 1 ? "stroke" : "strokes"} drawn. Keep tracing or start again.`;
   if (attempt.feedback === "drawing") feedback = "Drawing… Lift your finger or pen to finish this stroke.";
   if (attempt.feedback === "interrupted") feedback = "Stroke interrupted. Your finished strokes are safe. Try again.";

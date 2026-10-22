@@ -10,11 +10,11 @@
 body { margin: 0; }
 button { font: inherit; }
 .practice-app { max-width: 1120px; margin: 0 auto; padding: 0 32px 48px; }
-.app-header { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #c9d3e3; }
+.app-header { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #c9d3e3; }
 h1 { margin: 0; font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -.025em; }
 .review-notice { margin: 0; padding: 8px 12px; background: #e3e9ff; color: #17349e; font-size: .875rem; border-radius: 6px; }
-.practice-layout { display: grid; grid-template-columns: minmax(0, 500px) minmax(240px, 1fr); gap: 48px; padding-top: 16px; align-items: start; }
-.lesson-identity { display: flex; align-items: center; gap: 24px; min-height: 72px; margin-bottom: 16px; }
+.practice-layout { display: grid; grid-template-columns: minmax(0, 460px) minmax(240px, 1fr); gap: 48px; padding-top: 16px; align-items: start; }
+.lesson-identity { display: flex; align-items: center; gap: 24px; min-height: 64px; margin-bottom: 12px; }
 .lesson-glyph { font-size: 4rem; line-height: 1; padding-right: 24px; border-right: 1px solid #c9d3e3; }
 .pronunciation { font-size: 2rem; line-height: 1.15; }
 .lesson-identity p { margin: 4px 0 0; font-size: .875rem; color: #526079; }
@@ -38,7 +38,7 @@ h1 { margin: 0; font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-
 .practice-controls button.primary:hover { background: #17349e; }
 .practice-controls button:focus-visible { outline: 3px solid #15223b; outline-offset: 4px; }
 .practice-controls button:disabled { opacity: .5; cursor: wait; }
-.reference-rail { padding-top: 88px; max-width: 340px; }
+.reference-rail { padding-top: 76px; max-width: 340px; }
 h2 { font-size: 1.125rem; line-height: 1.35; margin: 0 0 8px; font-weight: 650; }
 .rail-intro p { margin: 0; color: #526079; }
 .reveal-instruction { margin: 24px 0; }
