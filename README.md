@@ -2,7 +2,7 @@
 
 A small Hindi handwriting practice app for mobile browsers.
 
-Status: investigation and implementation plan. No app scaffold, dependencies, automated fence, or deployment exists yet.
+Status: local Void/React practice shell and automated fence implemented. Tracing, stroke checking, calibration, content review, and device verification are still pending; no deployment exists.
 
 Use React and Void. Use rat-stack as the engineering reference: Effect for external work and typed failures, and compiler, lint, tests, and hooks for enforcement. The owner's explicit choices replace Foldkit with React and Alchemy with Void deployment.
 
@@ -103,3 +103,27 @@ Start with local development and no cloud data resources. Keep rat-stack's check
 ## Intentionally deferred
 
 Accounts, email, cloud persistence, spaced repetition, whole-word recognition, OCR, model training, and polished stroke morphing. No Skritter code or character dataset is part of the proposed app.
+
+## Local development and verification
+
+Use Node 24.21.0 or newer and the package-manager version pinned in the manifest.
+
+```sh
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
+pnpm dev
+```
+
+The app is the actual Void 1.2.0 React Static Pages starter, without database or deployment setup. Void's page entry renders the browser practice module. Lesson content and pure geometry belong under the practice domain; browser drawing belongs under its browser folder. Provider adapters and server routes cannot be imported into either domain or browser code. There is no server mutation or cloud state.
+
+The generated `dev`, `build`, `preview`, and `postinstall` commands are retained. The enforcement scripts are:
+
+- `pnpm check`: Void type generation, strict TypeScript with patched Effect diagnostics, and Oxlint including import boundaries.
+- `pnpm test`: intentional compiler/import failure probes followed by the complete-page Playwright checks.
+- `pnpm build`: Void's client and Worker build, without publishing.
+
+`prepare` patches the pinned TypeScript 7.0.2 compiler using compatible `@effect/tsgo` 0.56.0 and installs Lefthook. Every commit runs check and test; CI installs from the frozen lockfile, installs Chromium, then runs check, test, and build. Do not bypass hooks. The fence regression test temporarily introduces invalid types, a floating Effect, and forbidden imports, requires each to fail, and removes the probes afterward.
+
+Oxlint's `jsx-a11y/prefer-tag-over-role` is disabled because it incorrectly demands that the accessible SVG writing pad become an HTML image; the pad needs SVG geometry and an explicit image role. Other accessibility correctness rules remain enabled. The initial shell is deliberately unstyled and provides no tracing or grading yet.
+
+A browser smoke check at phone and desktop viewport sizes proves that the local shell loads and the pad stays square. This is emulation, not physical-device validation. No deployment or real-phone verification has been performed.

@@ -1,0 +1,13 @@
+node_modules
+dist
+.void
+.wrangler
+.void-wrangler.jsonc
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+.DS_Store
+playwright-report/
+test-results/
+.fence-fixtures-*/

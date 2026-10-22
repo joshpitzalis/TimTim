@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "react",
+    "jsx-a11y"
+  ],
+  "jsPlugins": [
+    "./scripts/oxlint-boundaries.mjs"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "strokes-boundaries/no-platform-in-domain": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/consistent-type-imports": "error",
+    "jsx-a11y/prefer-tag-over-role": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/**/domain/**/*.{ts,tsx}",
+        "pages/**/*.{ts,tsx}",
+        ".fence-fixtures/domain/*.ts"
+      ],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          "window",
+          "document",
+          "navigator",
+          "localStorage",
+          "sessionStorage",
+          "fetch",
+          "PointerEvent",
+          "ResizeObserver",
+          "require"
+        ]
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules",
+    ".void",
+    "dist",
+    "test-results",
+    "playwright-report"
+  ]
+}

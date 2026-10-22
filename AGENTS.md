@@ -18,7 +18,7 @@ The checked-in lesson is authoritative for the teaching sequence. React state ow
 
 ## Enforcement
 
-The folder currently contains documentation only. The rat-stack fence is required but is not installed or verified yet. Establish exact dependency pins, strict type checking with Effect diagnostics, import-boundary lint, tests, commit hooks, and CI with the scaffold. Derive commands from its package scripts.
+The Void/React scaffold uses exact dependency pins, strict type checking with Effect diagnostics, Oxlint import boundaries, browser tests, commit hooks, and CI. Run `pnpm check`, `pnpm test`, and `pnpm build`; derive commands from the package scripts and preserve the fence. Read installed Void guidance at `node_modules/void/skills/void/SKILL.md` and matching `node_modules/void/docs/` before framework changes. Read `node_modules/effect/AGENTS.md` and pinned source before Effect changes.
 
 Keep provider implementations outside domain code. Framework routes adapt shared contracts when server actions are introduced. Keep browser APIs in browser modules. Report violations of these patterns explicitly and fix their cause; preserve checks rather than bypassing them.
 
