@@ -42,7 +42,6 @@ for (const viewport of [
 				});
 			}
 			await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-			await touch.detach();
 			await expect(page.getByRole("status")).toContainText("1 stroke drawn");
 			expect(await page.evaluate(() => window.scrollY)).toBe(0);
 			await retry.tap();
