@@ -6,7 +6,8 @@
     "jsx-a11y"
   ],
   "jsPlugins": [
-    "./scripts/oxlint-boundaries.mjs"
+    "./scripts/oxlint-boundaries.mjs",
+    "oxlint-tailwindcss"
   ],
   "categories": {
     "correctness": "error"
@@ -15,13 +16,18 @@
     "strokes-boundaries/no-platform-in-domain": "error",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "error",
-    "typescript/consistent-type-imports": "error"
+    "typescript/consistent-type-imports": "error",
+    "tailwindcss/no-conflicting-classes": "error",
+    "tailwindcss/no-unknown-classes": "error",
+    "tailwindcss/no-dynamic-classes": "error",
+    "tailwindcss/no-duplicate-classes": "error",
+    "tailwindcss/no-deprecated-classes": "error"
   },
   "overrides": [
     {
       "files": [
         "src/**/domain/**/*.{ts,tsx}",
-        "pages/**/*.{ts,tsx}",
+        "src/pages/**/*.{ts,tsx}",
         ".fence-fixtures-*/domain/*.ts"
       ],
       "rules": {
@@ -42,9 +48,16 @@
   ],
   "ignorePatterns": [
     "node_modules",
+    ".agents",
+    ".claude",
     ".void",
     "dist",
     "test-results",
     "playwright-report"
-  ]
+  ],
+  "settings": {
+    "tailwindcss": {
+      "entryPoint": "src/styles.css"
+    }
+  }
 }

@@ -1,27 +1,45 @@
-# Strokes
+# Project conventions
 
-Read [README.md](README.md) for the product, investigation evidence, data ownership, and first implementation slice.
+TypeScript web app using Effect. Follow the installed Effect version and existing project conventions.
 
-Project repository and issue tracker: [joshpitzalis/TimTim](https://github.com/joshpitzalis/TimTim). Publish implementation specifications to GitHub Issues with the `ready-for-agent` label after required test-seam confirmation. Create that label if absent.
+## Feature ownership
 
-## Build reference
+- Build self-contained vertical slices. Keep feature-specific domain code, use cases, services, controllers, UI, tests, and supporting code together.
+- Removing functionality should mean deleting its feature module and removing minimal, explicit registration. Document unavoidable external dependencies or cleanup in the feature README.
+- Expose a small public API; do not import another feature's internals. Extract shared code only when it is genuinely shared.
+- Preserve applied database migrations; deleting code must not implicitly delete persisted data or external resources.
+- Colocate tests in a `__tests__/` folder inside each feature, such as `src/features/installation/__tests__/`. Keep feature-specific fixtures and test helpers there too.
+- When a feature starts as a single file, give it a feature folder when adding tests so its implementation and tests stay together.
+- Verify changed behavior with appropriate checks.
 
-Use [rat-stack](https://ratstack.sh/llms.txt) as the engineering reference. Search its rules and skills before code changes. Read the owning rule and matching skill, then inspect the installed package instructions and pinned source for Effect, XState, and infrastructure work.
+## Structure and responsibilities
 
-Owner decisions: React for the UI; no Foldkit. Void owns the framework and deployment; use it instead of Alchemy. Effect owns external work and typed failures. Retain rat-stack's boundary and fence patterns while following these explicit framework choices.
+Keep named features under `src/features/`. Start small: a whole feature can begin as one file, such as `src/features/installation.ts`. As responsibilities grow, use this structure:
 
-## Product boundaries
+```text
+src/features/installation/
+  index.ts          # Public API and feature wiring
+  domain/           # Business types, schemas, rules, and business errors
+  use-cases/        # Business actions; coordinate domain rules and services
+  services/         # Effect service contracts, implementations, and Layers
+  controller.ts     # HTTP input, use-case calls, response/error mapping
+src/main.ts         # Compose Layers and start the app
+```
 
-Start with mobile tracing of one reviewed Hindi letter. Keep the input loop local and geometry pure. Author original lesson templates; Skritter's code and data are research references only.
+- Domain code must not depend on HTTP, databases, controllers, use cases, or service implementations.
+- Controllers call use cases; use cases depend on service contracts and domain rules. Keep SQL and external API details in services.
+- Keep each service's contract, implementation, and Layer together by default. Acquire external resources through Effect, never as import-time side effects.
+- Use these names: `use-cases/`, `services/`, and `controller.ts`.
 
-The checked-in lesson is authoritative for the teaching sequence. React state owns the temporary attempt. Add durable progress only after naming its writer and authoritative store.
+## Grow files incrementally
 
-## Enforcement
+- Aim for roughly 200 lines per file; this is a soft limit.
+- Any module—feature, use case, service, controller, or utility—may start as one file.
+- As it grows, replace the file with a same-named folder containing `index.ts`. Extract the most semantically isolated concept into a descriptively named sibling file; repeat as needed.
+- Example: `utils.ts` → `utils/index.ts` + `utils/formatCurrency.ts`.
+- The index may retain cohesive implementation; it need not be only re-exports. Avoid redundant nested folders and arbitrary splits.
+- Preserve public exports and update imports according to the project's module-resolution rules.
+- Use cases and services may each own `helpers/` for named supporting operations and `lib/` for files such as `errors.ts`, `utils.ts`, and `constants.ts`. These files follow the owning module's dependency boundaries.
+- Create only needed files and folders. Keep supporting code local; do not scaffold empty directories or speculative abstractions.
 
-The Void/React scaffold uses exact dependency pins, strict type checking with Effect diagnostics, Oxlint import boundaries, browser tests, commit hooks, and CI. Run `pnpm check`, `pnpm test`, and `pnpm build`; derive commands from the package scripts and preserve the fence. Read installed Void guidance at `node_modules/void/skills/void/SKILL.md` and matching `node_modules/void/docs/` before framework changes. Read `node_modules/effect/AGENTS.md` and pinned source before Effect changes.
-
-Keep provider implementations outside domain code. Framework routes adapt shared contracts when server actions are introduced. Keep browser APIs in browser modules. Report violations of these patterns explicitly and fix their cause; preserve checks rather than bypassing them.
-
-## Verification
-
-Use geometry properties for the matcher and browser interaction checks for drawing, clearing, resizing, and cancellation. Validate mobile behavior on real devices. Report local checks, deployment, and device verification separately.
+Verify changed behavior with appropriate checks and keep tests near their owner.

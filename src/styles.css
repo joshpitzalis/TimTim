@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: system-ui, sans-serif;
+  --color-page: #edf1f6;
+  --color-ink: #15223b;
+  --color-muted: #526079;
+  --color-line: #c9d3e3;
+  --color-grid: #dce3ee;
+  --color-guide: #c6d2f6;
+  --color-accent: #2348d1;
+  --color-accent-dark: #17349e;
+  --color-accent-soft: #e3e9ff;
+  --color-accent-pressed: #d3ddff;
+  --breakpoint-desktop: 760.01px;
+}
+
+@layer base {
+  html {
+    @apply bg-page font-sans text-base leading-normal text-ink;
+    font-synthesis: none;
+  }
+}

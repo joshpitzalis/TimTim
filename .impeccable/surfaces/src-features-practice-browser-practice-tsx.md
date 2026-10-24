@@ -1,7 +1,7 @@
 ---
 version: 1
 slug: "src-features-practice-browser-practice-tsx"
-primary_target: "src/features/practice/browser/practice.tsx"
+primary_target: "src/features/practice/components/practice.tsx"
 related_targets: []
 ---
 

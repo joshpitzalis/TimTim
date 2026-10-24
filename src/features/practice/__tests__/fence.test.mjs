@@ -4,6 +4,32 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 
+test("Tailwind lint rejects unknown, conflicting and dynamic classes but accepts theme utilities", () => {
+  const directory = mkdtempSync(join(process.cwd(), ".fence-fixtures-"));
+  const probe = join(directory, "probe.tsx");
+  try {
+    for (const [expression, rule] of [
+      ['"timtim-invalid-class"', "no-unknown-classes"],
+      ['"flex block"', "no-conflicting-classes"],
+      ['"flex flex"', "no-duplicate-classes"],
+      ['`text-${size}`', "no-dynamic-classes"],
+      ['"flex gap-4 text-accent"', null],
+    ]) {
+      writeFileSync(probe, `export const Probe = ({ size }: { size: string }) => <div className={${expression}}>{size}</div>;`);
+      const result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", probe], { encoding: "utf8" });
+      const output = result.stdout + result.stderr;
+      if (rule) {
+        assert.notEqual(result.status, 0, `${expression} must fail`);
+        assert.ok(output.includes(rule), output);
+      } else {
+        assert.equal(result.status, 0, output);
+      }
+    }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
 test("the fence rejects invalid types, floating Effects and cross-boundary imports", () => {
   const directory = mkdtempSync(join(process.cwd(), ".fence-fixtures-"));
   const probe = join(directory, "domain", "probe.ts");
@@ -26,6 +52,9 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       'import { adapter } from "../browser/adapter"; export const value = adapter;',
       'export { adapter } from "../browser/adapter";',
       'export const adapter = import("../browser/adapter");',
+      'import { adapter } from "../components/adapter"; export const value = adapter;',
+      'export { adapter } from "../use-cases/adapter";',
+      'export const adapter = import("../components/adapter");',
       'import { readFile } from "node:fs"; export const adapter = readFile;',
     ]) {
       writeFileSync(probe, source);
@@ -40,7 +69,8 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       assert.match(result.stdout + result.stderr, /no-restricted-globals/);
     }
     mkdirSync(join(directory, "pages"));
-    for (const folder of ["browser", "pages"]) {
+    for (const folder of ["browser", "components", "use-cases", "pages"]) {
+      mkdirSync(join(directory, folder), { recursive: true });
       const browserProbe = join(directory, folder, "probe.ts");
       for (const name of ["void", "fs", "fs/promises", "path", "child_process", "node:fs", "void/handler", "void/kv", "void/storage", "@void/react/pages-server", "@void/react/plugin"]) {
         writeFileSync(browserProbe, `import * as dependency from "${name}"; export const value = dependency;`);
@@ -52,6 +82,16 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
         writeFileSync(browserProbe, `import * as dependency from "${name}"; export const value = dependency;`);
         result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", browserProbe], { encoding: "utf8" });
         assert.equal(result.status, 0, `${folder} browser import ${name} must pass: ${result.stdout}${result.stderr}`);
+      }
+    }
+    for (const folder of ["routes", "providers"]) {
+      mkdirSync(join(directory, folder));
+      for (const target of ["components", "use-cases"]) {
+        const serverProbe = join(directory, folder, "probe.ts");
+        writeFileSync(serverProbe, `export { adapter } from "../${target}/adapter";`);
+        result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", serverProbe], { encoding: "utf8" });
+        assert.notEqual(result.status, 0, `${folder} importing ${target} must fail`);
+        assert.match(result.stdout + result.stderr, /no-platform-in-domain/);
       }
     }
     writeFileSync(probe, 'import { Effect } from "effect"; export const value = Effect.succeed(1);');

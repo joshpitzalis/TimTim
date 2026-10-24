@@ -8,6 +8,8 @@ Use React and Void. Use rat-stack as the engineering reference: Effect for exter
 
 The implementation specification is [SPEC.md](SPEC.md), published as [GitHub issue #1](https://github.com/joshpitzalis/TimTim/issues/1). The owner confirmed the test seams and four-ticket breakdown on 2026-10-22. Implementation tickets [#2](https://github.com/joshpitzalis/TimTim/issues/2), [#3](https://github.com/joshpitzalis/TimTim/issues/3), [#4](https://github.com/joshpitzalis/TimTim/issues/4), and [#5](https://github.com/joshpitzalis/TimTim/issues/5) are labeled `ready-for-agent` and linked in dependency order; #2 can start immediately.
 
+The follow-on step 3 specification is [SPEC-LESSONS.md](SPEC-LESSONS.md): a small reviewed lesson catalog, then practice completion saved on this browser. It depends on the checked single-letter exercise and awaits confirmation of its proposed test seams before publication.
+
 ## What the Skritter investigation found
 
 The open Chrome tab was readable through native accessibility. Chrome did not expose a debugging endpoint, so REA could not attach to the authenticated page. The study session was left unchanged.
@@ -26,7 +28,7 @@ I downloaded the public scripts linked by `https://skritter.com/study` and ran R
 These are static code findings from the legacy web bundle. They do not prove which branches ran in your session or describe Skritter's native apps. No trained recognizer was needed to explain this particular code path.
 
 REA evidence: `ev_ac4cc745a3f06625034762dfdcc80b0b49437d7c2367df61f361a94018d9353b`.
-The source hashes, selection, and limitations are in [research/rea-summary.json](research/rea-summary.json). Full temporary evidence is at `/private/tmp/skritter-rea-evidence.json`.
+The source hashes, selection, and limitations are in [docs/research/rea-summary.json](docs/research/rea-summary.json). Full temporary evidence is at `/private/tmp/skritter-rea-evidence.json`.
 
 ## The smallest useful implementation
 
@@ -114,7 +116,9 @@ pnpm exec playwright install chromium
 pnpm dev
 ```
 
-The app is the actual Void 1.2.0 React Static Pages starter, without database or deployment setup. Void's page entry renders the browser practice module. Lesson content and pure geometry belong under the practice domain; browser drawing belongs under its browser folder. Provider adapters and server routes cannot be imported into either domain or browser code. There is no server mutation or cloud state.
+The app is the actual Void 1.2.0 React Static Pages starter, without database or deployment setup. Void's page entry renders the browser practice module. Lesson content and pure geometry belong under the practice domain; the tracing UI belongs under `components/` and its browser drawing hook under `use-cases/`. Provider adapters and server routes cannot be imported into either domain or browser code. There is no server mutation or cloud state.
+
+Tailwind utilities own the practice styles. `src/styles.css` imports Tailwind and defines the shared theme; `oxlint-tailwindcss` rejects unknown, conflicting, duplicate, dynamic, and deprecated classes.
 
 The generated `dev`, `build`, `preview`, and `postinstall` commands are retained. The enforcement scripts are:
 

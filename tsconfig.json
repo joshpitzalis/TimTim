@@ -1,49 +1,35 @@
 {
-  "extends": "./.void/tsconfig.json",
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "types": [
-      "void/env",
-      "node",
-      "vite/client"
-    ],
-    "jsx": "react-jsx",
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "diagnosticSeverity": {
-          "floatingEffect": "error",
-          "anyUnknownInErrorContext": "error",
-          "missingEffectContext": "error",
-          "missingEffectError": "error",
-          "unsafeEffectTypeAssertion": "error"
-        },
-        "ignoreEffectWarningsInTscExitCode": false,
-        "ignoreEffectErrorsInTscExitCode": false
-      }
-    ],
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": [
-    "src",
-    "pages",
-    "tests",
-    "*.ts",
-    "*.mts"
-  ]
+	"extends": "./.void/tsconfig.json",
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"types": ["void/env", "node", "vite/client"],
+		"jsx": "react-jsx",
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"plugins": [
+			{
+				"name": "@effect/language-service",
+				"diagnosticSeverity": {
+					"floatingEffect": "error",
+					"anyUnknownInErrorContext": "error",
+					"missingEffectContext": "error",
+					"missingEffectError": "error",
+					"unsafeEffectTypeAssertion": "error"
+				},
+				"ignoreEffectWarningsInTscExitCode": false,
+				"ignoreEffectErrorsInTscExitCode": false
+			}
+		],
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true
+	},
+	"include": ["src", "*.ts", "*.mts"]
 }
