@@ -9,6 +9,43 @@ for (const viewport of [
 		test.use({ viewport, isMobile: true, hasTouch: true, deviceScaleFactor: 3 });
 
 		test("uses device width and stacks practice above guidance", async ({ page }, testInfo) => {
+			page.on("console", (message) => {
+				if (message.text().startsWith("[DEBUG-touch]")) console.log(message.text());
+			});
+			await page.addInitScript(() => {
+				for (const name of [
+					"touchstart",
+					"touchend",
+					"pointerdown",
+					"pointerup",
+					"pointercancel",
+					"mousedown",
+					"mouseup",
+					"click",
+				]) {
+					document.addEventListener(
+						name,
+						(event) => {
+							queueMicrotask(() =>
+								console.log(
+									"[DEBUG-touch]",
+									JSON.stringify({
+										type: event.type,
+										target:
+											event.target instanceof Element
+												? event.target.tagName + ":" + (event.target.textContent ?? "").slice(0, 25)
+												: "unknown",
+										prevented: event.defaultPrevented,
+										x: event instanceof MouseEvent ? event.clientX : null,
+										y: event instanceof MouseEvent ? event.clientY : null,
+									}),
+								),
+							);
+						},
+						true,
+					);
+				}
+			});
 			await page.goto("/");
 			await expect(page.getByRole("status")).toContainText("Ready to trace");
 			await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(viewport.width);
@@ -47,6 +84,16 @@ for (const viewport of [
 			await retry.scrollIntoViewIfNeeded();
 			const target = await retry.boundingBox();
 			if (!target) throw new Error("Retry has no bounds");
+			console.log(
+				"[DEBUG-touch] target",
+				target,
+				await page.evaluate(() => ({
+					width: innerWidth,
+					scale: visualViewport?.scale,
+					x: visualViewport?.offsetLeft,
+					y: visualViewport?.offsetTop,
+				})),
+			);
 			await touch.send("Input.dispatchTouchEvent", {
 				type: "touchStart",
 				touchPoints: [{ x: target.x + target.width / 2, y: target.y + target.height / 2 }],
