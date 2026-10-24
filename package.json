@@ -13,9 +13,11 @@
     "lint": "oxlint --deny-warnings",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "test": "pnpm test:fence && pnpm test:content && pnpm test:browser",
+    "test": "pnpm test:tooling && pnpm test:fence && pnpm test:content && pnpm test:browser",
+    "test:tooling": "node --test scripts/__tests__/*.test.mjs",
     "test:content": "vitest run",
     "test:browser": "playwright test",
+    "test:browser:linux": "bash scripts/test-browser-linux.sh",
     "prepare": "effect-tsgo patch && lefthook install",
     "test:fence": "node --test src/features/writing/__tests__/fence.test.mjs"
   },

@@ -2,6 +2,8 @@
 
 TypeScript web app using Effect. Follow the installed Effect version and existing project conventions.
 
+When local checks pass but CI fails, follow [the CI debugging guide](docs/ci-debugging.md).
+
 ## Feature ownership
 
 - Build self-contained vertical slices. Keep feature-specific domain code, use cases, services, UI, tests, and supporting code together.
