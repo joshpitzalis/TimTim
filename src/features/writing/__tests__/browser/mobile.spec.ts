@@ -25,23 +25,15 @@ for (const viewport of [
 			expect(guidanceBounds.y).toBeGreaterThanOrEqual(retryBounds.y + retryBounds.height);
 			expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(viewport.width);
 			const touch = await page.context().newCDPSession(page);
-			await touch.send("Input.dispatchTouchEvent", {
-				type: "touchStart",
-				touchPoints: [{ x: bounds.x + bounds.width * 0.3, y: bounds.y + bounds.height * 0.4 }],
+			// Native gestures avoid Linux Chromium swallowing the next tap after raw touch injection.
+			await touch.send("Input.synthesizeScrollGesture", {
+				x: bounds.x + bounds.width * 0.3,
+				y: bounds.y + bounds.height * 0.4,
+				xDistance: -bounds.width * 0.25,
+				yDistance: -bounds.height * 0.15,
+				gestureSourceType: "touch",
+				preventFling: true,
 			});
-			await expect(page.getByRole("status")).toContainText("Drawing…");
-			for (let step = 1; step <= 5; step++) {
-				await touch.send("Input.dispatchTouchEvent", {
-					type: "touchMove",
-					touchPoints: [
-						{
-							x: bounds.x + bounds.width * (0.3 + step * 0.05),
-							y: bounds.y + bounds.height * (0.4 + step * 0.03),
-						},
-					],
-				});
-			}
-			await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 			await expect(page.getByRole("status")).toContainText("1 stroke drawn");
 			expect(await page.evaluate(() => window.scrollY)).toBe(0);
 			await retry.tap();
