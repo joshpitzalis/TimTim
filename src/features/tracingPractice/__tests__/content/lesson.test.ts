@@ -1,9 +1,9 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { Practice } from "../../../../pages/index";
 import { expect, test } from "vitest";
-import { parseLesson } from "../../domain/lesson";
-import { DEVELOPMENT_LESSON } from "../../domain/development-lesson";
+import { ErrorBox } from "../../../../pages/index";
+import { DEVELOPMENT_LESSON } from "../../use-cases/tracing/development-lesson";
+import { parseLesson } from "../../use-cases/tracing/helpers";
 
 test("the original development lesson parses with honest review status and ordered strokes", () => {
 	const result = parseLesson(DEVELOPMENT_LESSON);
@@ -88,11 +88,10 @@ test("the content boundary preserves the authored teaching order", () => {
 });
 
 test("invalid content renders a distinct failure without learner controls or completion", () => {
-	const markup = renderToStaticMarkup(
-		createElement(Practice, {
-			content: parseLesson({ ...DEVELOPMENT_LESSON, strokes: [] }),
-		}),
-	);
+	const content = parseLesson({ ...DEVELOPMENT_LESSON, strokes: [] });
+	expect(content.kind).toBe("unusable");
+	if (content.kind !== "unusable") throw new Error("Invalid lesson did not fail");
+	const markup = renderToStaticMarkup(createElement(ErrorBox, { message: content.message }));
 	expect(markup).toContain('role="alert"');
 	expect(markup).toContain("Lesson unavailable");
 	expect(markup).toContain("Its content needs repair.");

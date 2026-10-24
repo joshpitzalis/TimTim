@@ -56,6 +56,7 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       'export { adapter } from "../use-cases/adapter";',
       'export const adapter = import("../components/adapter");',
       'import { readFile } from "node:fs"; export const adapter = readFile;',
+      'import { createElement } from "react"; export const adapter = createElement;',
     ]) {
       writeFileSync(probe, source);
       result = lint();
@@ -94,6 +95,9 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
         assert.match(result.stdout + result.stderr, /no-platform-in-domain/);
       }
     }
+    writeFileSync(probe, 'import type { PointerEvent } from "react"; export type Handler = (event: PointerEvent) => void;\n');
+    result = lint();
+    assert.equal(result.status, 0, result.stdout + result.stderr);
     writeFileSync(probe, 'import { Effect } from "effect"; export const value = Effect.succeed(1);');
     result = lint();
     assert.equal(result.status, 0, result.stdout + result.stderr);

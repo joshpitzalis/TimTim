@@ -21,7 +21,26 @@ export default {
         const domain = filename.includes("/domain/");
         const browser = isBrowserModule(filename);
         const page = filename.includes("/pages/") && !filename.endsWith(".server.ts");
+        function isTypeOnly(node) {
+          if (node.type === "ImportDeclaration") {
+            return node.importKind === "type" || (
+              node.specifiers?.length > 0 &&
+              node.specifiers.every((specifier) => specifier.importKind === "type")
+            );
+          }
+          if (node.type === "ExportAllDeclaration") return node.exportKind === "type";
+          if (node.type === "ExportNamedDeclaration") {
+            const specifiers = node.specifiers ?? [];
+            return node.exportKind === "type" || (
+              node.declaration == null &&
+              specifiers.length > 0 &&
+              specifiers.every((specifier) => specifier.exportKind === "type")
+            );
+          }
+          return false;
+        }
         function check(node) {
+          if (isTypeOnly(node)) return;
           const source = node.source;
           if (!source) return;
           const name = source.value;

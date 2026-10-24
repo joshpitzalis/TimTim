@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "useTabs": true,
+  "ignorePatterns": [
+    "node_modules",
+    ".agents",
+    ".claude",
+    ".void",
+    "dist",
+    "test-results",
+    "playwright-report"
+  ],
+  "overrides": [
+    {
+      "files": ["*.css"],
+      "options": {
+        "useTabs": false
+      }
+    }
+  ]
+}

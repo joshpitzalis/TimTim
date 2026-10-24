@@ -1,35 +1,81 @@
 import "../styles.css";
-import { DEVELOPMENT_LESSON } from "../features/practice/domain/development-lesson";
-import {
-	type LessonContent,
-	parseLesson,
-} from "../features/practice/domain/lesson";
-import { TracingPractice } from "../features/practice/components/practice";
-
-const CONTENT = parseLesson(DEVELOPMENT_LESSON);
+import { DEVELOPMENT_LESSON } from "../features/tracingPractice/use-cases/tracing/development-lesson";
+import { parseLesson } from "../features/tracingPractice/use-cases/tracing/helpers";
+import type { Lesson } from "../features/tracingPractice/domain/lessons";
+import { useDrawing } from "../features/tracingPractice/use-cases/tracing";
+import { feedbackMessage } from "../features/tracingPractice/use-cases/tracing/session";
+import { Controls } from "../features/tracingPractice/use-cases/tracing/components/Controls";
+import { Explainer } from "../features/tracingPractice/use-cases/tracing/components/Explainer";
+import { Feedback } from "../features/tracingPractice/use-cases/tracing/components/Feedback";
+import { Header } from "../features/tracingPractice/use-cases/tracing/components/Header";
+import { TracingBox } from "../features/tracingPractice/use-cases/tracing/components/TracingBox";
 
 export default function HomePage() {
-	return <Practice content={CONTENT} />;
+	const content = parseLesson(DEVELOPMENT_LESSON);
+	if (content.kind === "unusable") {
+		return <ErrorBox message={content.message} />;
+	}
+	return <PracticeArea lesson={content.lesson} />;
 }
 
-export function Practice({ content }: { readonly content: LessonContent }) {
-	if (content.kind === "unusable") {
-		return (
-			<main className="mx-auto max-w-280 px-5 pb-8 desktop:px-8 desktop:pb-12">
+export function PracticeArea({ lesson }: { readonly lesson: Lesson }) {
+	const drawing = useDrawing();
+	const feedback = feedbackMessage({
+		attempt: drawing.attempt,
+		revealed: drawing.revealed,
+		ready: drawing.ready,
+	});
+
+	return (
+		<main className="mx-auto max-w-280 px-5 pb-8 desktop:px-8 desktop:pb-12">
+			<header className="flex min-h-20 items-center justify-between gap-3 border-b border-line desktop:min-h-18 desktop:gap-4">
 				<h1 className="text-2xl leading-[1.15] font-bold tracking-[-.025em] desktop:text-[1.75rem]">
 					Strokes
 				</h1>
-				<section role="alert">
-					<h2 className="mb-2 text-lg leading-[1.35] font-[650]">
-						Lesson unavailable
-					</h2>
-					<p>{content.message}</p>
-					<p>
-						Your writing has not been checked. Reload the page to try again.
-					</p>
+				<p className="max-w-47.5 rounded-md bg-accent-soft px-2 py-1.5 text-xs text-accent-dark desktop:max-w-none desktop:px-3 desktop:py-2 desktop:text-sm">
+					Development lesson — review pending
+				</p>
+			</header>
+			<div className="grid grid-cols-[minmax(0,1fr)] items-start gap-8 pt-4 desktop:grid-cols-[minmax(0,460px)_minmax(240px,1fr)] desktop:gap-12">
+				<section aria-label="Letter practice">
+					<Header glyph={lesson.glyph} pronunciation={lesson.pronunciation} />
+					<TracingBox
+						lesson={lesson}
+						attempt={drawing.attempt}
+						padRef={drawing.padRef}
+						ready={drawing.ready}
+						revealed={drawing.revealed}
+						onPointerDown={drawing.onPointerDown}
+						onPointerMove={drawing.onPointerMove}
+						onPointerUp={drawing.onPointerUp}
+						onPointerCancel={drawing.onPointerCancel}
+						onLostPointerCapture={drawing.onLostPointerCapture}
+					/>
+					<Feedback message={feedback} />
+					<Controls
+						ready={drawing.ready}
+						revealed={drawing.revealed}
+						onReset={drawing.reset}
+						onReveal={drawing.reveal}
+					/>
 				</section>
-			</main>
-		);
-	}
-	return <TracingPractice lesson={content.lesson} />;
+				<Explainer lesson={lesson} revealed={drawing.revealed} />
+			</div>
+		</main>
+	);
+}
+
+export function ErrorBox({ message }: { readonly message: string }) {
+	return (
+		<main className="mx-auto max-w-280 px-5 pb-8 desktop:px-8 desktop:pb-12">
+			<h1 className="text-2xl leading-[1.15] font-bold tracking-[-.025em] desktop:text-[1.75rem]">
+				Strokes
+			</h1>
+			<section role="alert">
+				<h2 className="mb-2 text-lg leading-[1.35] font-[650]">Lesson unavailable</h2>
+				<p>{message}</p>
+				<p>Your writing has not been checked. Reload the page to try again.</p>
+			</section>
+		</main>
+	);
 }
