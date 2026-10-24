@@ -53,7 +53,7 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       'export { adapter } from "../browser/adapter";',
       'export const adapter = import("../browser/adapter");',
       'import { adapter } from "../components/adapter"; export const value = adapter;',
-      'export { adapter } from "../use-cases/adapter";',
+      'export { adapter } from "../use-case/adapter";',
       'export const adapter = import("../components/adapter");',
       'import { readFile } from "node:fs"; export const adapter = readFile;',
       'import { createElement } from "react"; export const adapter = createElement;',
@@ -70,7 +70,7 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
       assert.match(result.stdout + result.stderr, /no-restricted-globals/);
     }
     mkdirSync(join(directory, "pages"));
-    for (const folder of ["browser", "components", "use-cases", "pages"]) {
+    for (const folder of ["browser", "components", "use-case", "pages"]) {
       mkdirSync(join(directory, folder), { recursive: true });
       const browserProbe = join(directory, folder, "probe.ts");
       for (const name of ["void", "fs", "fs/promises", "path", "child_process", "node:fs", "void/handler", "void/kv", "void/storage", "@void/react/pages-server", "@void/react/plugin"]) {
@@ -87,7 +87,7 @@ test("the fence rejects invalid types, floating Effects and cross-boundary impor
     }
     for (const folder of ["routes", "providers"]) {
       mkdirSync(join(directory, folder));
-      for (const target of ["components", "use-cases"]) {
+      for (const target of ["components", "use-case"]) {
         const serverProbe = join(directory, folder, "probe.ts");
         writeFileSync(serverProbe, `export { adapter } from "../${target}/adapter";`);
         result = spawnSync("./node_modules/.bin/oxlint", ["--deny-warnings", serverProbe], { encoding: "utf8" });

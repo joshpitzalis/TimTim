@@ -20,7 +20,7 @@ Keep named features under `src/features/`. Start small: a whole feature can begi
 src/features/installation/
   index.ts          # Public API and feature wiring
   domain/           # Business types, schemas, rules, and business errors
-  use-cases/        # Business actions; coordinate domain rules and services
+  use-case/         # Business actions; coordinate domain rules and services
   services/         # Effect service contracts, implementations, and Layers
  
 src/main.ts         # Compose Layers and start the app
@@ -29,7 +29,7 @@ src/main.ts         # Compose Layers and start the app
 - Domain code must not depend on HTTP, databases, use cases, or service implementations.
 - Use cases depend on service contracts and domain rules. Keep SQL and external API details in services.
 - Keep each service's contract, implementation, and Layer together by default. Acquire external resources through Effect, never as import-time side effects.
-- Use these names: `use-cases/` and `services/`.
+- Use these names: `use-case/` and `services/`.
 
 ## Grow files incrementally
 

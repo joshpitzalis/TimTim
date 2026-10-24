@@ -9,6 +9,7 @@
     "postinstall": "void prepare",
     "check": "pnpm typecheck && pnpm lint",
     "typecheck": "void prepare && tsc --noEmit",
+    "ts": "void prepare && tsc --noEmit --watch",
     "lint": "oxlint --deny-warnings",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -16,7 +17,7 @@
     "test:content": "vitest run",
     "test:browser": "playwright test",
     "prepare": "effect-tsgo patch && lefthook install",
-    "test:fence": "node --test src/features/tracingPractice/__tests__/fence.test.mjs"
+    "test:fence": "node --test src/features/writing/__tests__/fence.test.mjs"
   },
   "dependencies": {
     "effect": "4.0.5",

@@ -1,6 +1,6 @@
 import { Result, Schema } from "effect";
-import { type LessonContent, LESSON } from "../../domain/lessons";
-import type { Attempt, Point } from "../../domain/strokes";
+import { type LessonContent, LESSON } from "../../../domain/lessons";
+import type { Attempt, Point } from "../../../domain/strokes";
 
 export const EMPTY: Attempt = { strokes: [], active: null, feedback: "ready" };
 

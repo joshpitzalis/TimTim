@@ -1,5 +1,5 @@
 import { Schema } from "effect";
-import { FINITE, LABEL } from "./constraints";
+import { FINITE, LABEL } from "./utils/constraints";
 import { REFERENCE_STROKE } from "./strokes";
 
 export const LESSON = Schema.Struct({

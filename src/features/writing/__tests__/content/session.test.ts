@@ -1,12 +1,12 @@
 import { expect, test } from "vitest";
-import { EMPTY } from "../../use-cases/tracing/helpers";
+import { EMPTY } from "../../use-case/tracing/helpers";
 import {
 	type Session,
 	type SessionAction,
 	INITIAL_SESSION,
 	feedbackMessage,
 	reduceSession,
-} from "../../use-cases/tracing/session";
+} from "../../use-case/tracing/helpers/session";
 
 const a = { x: 10, y: 20 };
 const b = { x: 30, y: 40 };

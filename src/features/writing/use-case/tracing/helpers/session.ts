@@ -1,5 +1,5 @@
-import type { Attempt, Point } from "../../domain/strokes";
-import { EMPTY } from "./helpers";
+import type { Attempt, Point } from "../../../domain/strokes";
+import { EMPTY } from "./index";
 
 export interface Session {
 	readonly attempt: Attempt;

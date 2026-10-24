@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import type { PointerEvent } from "react";
-import type { Capture, Drawing } from "../../domain/strokes";
-import { sameMatrix, toPoint } from "./helpers";
-import { INITIAL_SESSION, reduceSession } from "./session";
+import type { Capture, Drawing } from "../../../domain/strokes";
+import { sameMatrix, toPoint } from "../helpers";
+import { INITIAL_SESSION, reduceSession } from "../helpers/session";
 
 export function useDrawing(): Drawing {
 	const padRef = useRef<SVGSVGElement>(null);

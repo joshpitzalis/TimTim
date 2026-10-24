@@ -1,14 +1,16 @@
 import "../styles.css";
-import { DEVELOPMENT_LESSON } from "../features/tracingPractice/use-cases/tracing/development-lesson";
-import { parseLesson } from "../features/tracingPractice/use-cases/tracing/helpers";
-import type { Lesson } from "../features/tracingPractice/domain/lessons";
-import { useDrawing } from "../features/tracingPractice/use-cases/tracing";
-import { feedbackMessage } from "../features/tracingPractice/use-cases/tracing/session";
-import { Controls } from "../features/tracingPractice/use-cases/tracing/components/Controls";
-import { Explainer } from "../features/tracingPractice/use-cases/tracing/components/Explainer";
-import { Feedback } from "../features/tracingPractice/use-cases/tracing/components/Feedback";
-import { Header } from "../features/tracingPractice/use-cases/tracing/components/Header";
-import { TracingBox } from "../features/tracingPractice/use-cases/tracing/components/TracingBox";
+import type { Lesson } from "../features/writing/domain/lessons";
+import {
+	Controls,
+	DEVELOPMENT_LESSON,
+	Explainer,
+	Feedback,
+	Header,
+	TracingBox,
+	feedbackMessage,
+	parseLesson,
+	useDrawing,
+} from "../features/writing/use-case/tracing";
 
 export default function HomePage() {
 	const content = parseLesson(DEVELOPMENT_LESSON);

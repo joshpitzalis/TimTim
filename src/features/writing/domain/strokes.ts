@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 import type { PointerEvent, RefObject } from "react";
-import { FINITE, LABEL } from "./constraints";
+import { FINITE, LABEL } from "./utils/constraints";
 
 export const Point = Schema.Struct({ x: FINITE, y: FINITE });
 export interface Point extends Schema.Schema.Type<typeof Point> {}
@@ -19,7 +19,7 @@ export const REFERENCE_STROKE = Schema.Struct({
 });
 
 export const ActiveStroke = Schema.Struct({
-	pointerId: Schema.Number,
+	pointerId: FINITE,
 	points: Schema.Array(Point),
 });
 export interface ActiveStroke extends Schema.Schema.Type<typeof ActiveStroke> {}
@@ -36,7 +36,7 @@ const ScreenMatrix = Schema.declare(
 );
 
 export const Capture = Schema.Struct({
-	pointerId: Schema.Number,
+	pointerId: FINITE,
 	matrix: ScreenMatrix,
 });
 export interface Capture extends Schema.Schema.Type<typeof Capture> {}

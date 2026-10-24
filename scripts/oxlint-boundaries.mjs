@@ -8,7 +8,7 @@ const browserVoidImports = new Set([
 ]);
 
 function isBrowserModule(filename) {
-  return ["/browser/", "/components/", "/use-cases/"].some((folder) => filename.includes(folder));
+  return ["/browser/", "/components/", "/use-case/"].some((folder) => filename.includes(folder));
 }
 
 export default {

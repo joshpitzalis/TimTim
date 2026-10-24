@@ -2,14 +2,13 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vitest";
 import { ErrorBox } from "../../../../pages/index";
-import { DEVELOPMENT_LESSON } from "../../use-cases/tracing/development-lesson";
-import { parseLesson } from "../../use-cases/tracing/helpers";
+import { DEVELOPMENT_LESSON } from "../../use-case/tracing/constants/development-lesson";
+import { parseLesson } from "../../use-case/tracing/helpers";
 
 test("the original development lesson parses with honest review status and ordered strokes", () => {
 	const result = parseLesson(DEVELOPMENT_LESSON);
 	expect(result.kind).toBe("ready");
-	if (result.kind !== "ready")
-		throw new Error("Development lesson did not parse");
+	if (result.kind !== "ready") throw new Error("Development lesson did not parse");
 	expect(result.lesson.glyph).toBe("ल");
 	expect(result.lesson.pronunciation).toBe("la");
 	expect(result.lesson.review).toBe("pending");
@@ -79,8 +78,7 @@ test("the content boundary preserves the authored teaching order", () => {
 		],
 	});
 	expect(result.kind).toBe("ready");
-	if (result.kind !== "ready")
-		throw new Error("Authored sequence did not parse");
+	if (result.kind !== "ready") throw new Error("Authored sequence did not parse");
 	expect(result.lesson.strokes.map((stroke) => stroke.points[0])).toEqual([
 		{ x: 70, y: 20 },
 		{ x: 10, y: 30 },
