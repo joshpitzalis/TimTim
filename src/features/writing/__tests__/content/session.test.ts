@@ -1,4 +1,6 @@
 import { expect, test } from "vitest";
+import { DEVELOPMENT_LESSON } from "../../use-case/tracing/constants/development-lesson";
+import { parseLesson } from "../../use-case/tracing/helpers";
 import { EMPTY } from "../../use-case/tracing/helpers";
 import {
 	type Session,
@@ -16,18 +18,13 @@ function apply(actions: readonly SessionAction[], session: Session = INITIAL_SES
 	return actions.reduce(reduceSession, session);
 }
 
-test("a stroke starts, extends, and commits without clearing the reference", () => {
-	const revealed = reduceSession(INITIAL_SESSION, { type: "reveal", interrupt: false });
-	const committed = apply(
-		[
-			{ type: "start", pointerId: 1, point: a },
-			{ type: "extend", point: b },
-			{ type: "commit", point: c },
-		],
-		revealed,
-	);
+test("a stroke starts, extends, and commits", () => {
+	const committed = apply([
+		{ type: "start", pointerId: 1, point: a },
+		{ type: "extend", point: b },
+		{ type: "commit", point: c },
+	]);
 
-	expect(committed.revealed).toBe(true);
 	expect(committed.attempt).toEqual({
 		strokes: [[a, b, c]],
 		active: null,
@@ -40,23 +37,8 @@ test("extend and commit leave a session unchanged when no stroke is active", () 
 	expect(reduceSession(INITIAL_SESSION, { type: "commit", point: a })).toBe(INITIAL_SESSION);
 });
 
-test("reveal keeps finished strokes and only interrupts an active stroke", () => {
-	const drawing = apply([
-		{ type: "start", pointerId: 1, point: a },
-		{ type: "commit", point: b },
-		{ type: "start", pointerId: 2, point: c },
-	]);
-	const shown = reduceSession(drawing, { type: "reveal", interrupt: true });
-
-	expect(shown.revealed).toBe(true);
-	expect(shown.attempt.strokes).toEqual([[a, b]]);
-	expect(shown.attempt.active).toBeNull();
-	expect(shown.attempt.feedback).toBe("interrupted");
-});
-
-test("reset clears the attempt and the reference together", () => {
+test("reset clears the attempt", () => {
 	const session = apply([
-		{ type: "reveal", interrupt: false },
 		{ type: "start", pointerId: 1, point: a },
 		{ type: "commit", point: b },
 		{ type: "reset" },
@@ -68,22 +50,15 @@ test("reset clears the attempt and the reference together", () => {
 
 test("feedback follows readiness, then the stroke, then how much is drawn", () => {
 	const idle = INITIAL_SESSION;
-	const revealed = reduceSession(idle, { type: "reveal", interrupt: false });
-	const drawn = apply(
-		[
-			{ type: "start", pointerId: 1, point: a },
-			{ type: "commit", point: b },
-		],
-		revealed,
-	);
+	const drawn = apply([
+		{ type: "start", pointerId: 1, point: a },
+		{ type: "commit", point: b },
+	]);
 	const drawing = reduceSession(drawn, { type: "start", pointerId: 3, point: c });
 	const interrupted = reduceSession(drawing, { type: "interrupt" });
 
 	expect(feedbackMessage({ ...idle, ready: false })).toBe("Preparing the writing area…");
 	expect(feedbackMessage({ ...idle, ready: true })).toBe("Ready to trace. Follow the faint guide.");
-	expect(feedbackMessage({ ...revealed, ready: true })).toBe(
-		"Reference shown. Trace along it, or choose Retry for the faint guide.",
-	);
 	expect(feedbackMessage({ ...drawn, ready: true })).toBe(
 		"1 stroke drawn. Keep tracing or start again.",
 	);
@@ -94,4 +69,20 @@ test("feedback follows readiness, then the stroke, then how much is drawn", () =
 		"Stroke interrupted. Your finished strokes are safe. Try again.",
 	);
 	expect(feedbackMessage({ ...interrupted, ready: false })).toBe("Preparing the writing area…");
+});
+
+test("checking ignores empty and active attempts, and drawing or retry clears the result", () => {
+	const content = parseLesson(DEVELOPMENT_LESSON);
+	if (content.kind !== "ready") throw new Error("Invalid lesson");
+	const action: SessionAction = { type: "check", lesson: content.lesson };
+	expect(reduceSession(INITIAL_SESSION, action)).toBe(INITIAL_SESSION);
+	const drawing = reduceSession(INITIAL_SESSION, { type: "start", pointerId: 1, point: a });
+	expect(reduceSession(drawing, action)).toBe(drawing);
+	const committed = reduceSession(drawing, { type: "commit", point: b });
+	const checked = reduceSession(committed, action);
+	expect(checked.attempt.feedback).toBe("incorrect");
+	expect(reduceSession(checked, { type: "start", pointerId: 2, point: c }).attempt.feedback).toBe(
+		"drawing",
+	);
+	expect(reduceSession(checked, { type: "reset" })).toBe(INITIAL_SESSION);
 });

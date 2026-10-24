@@ -12,7 +12,7 @@ A Hindi learner practicing isolated letters in a mobile browser, using a finger 
 
 ## Product Purpose
 
-Strokes makes one Hindi letter available for tracing, revealing, retrying, and eventually checking one directed stroke at a time. Success means reliable local interaction and honest feedback against original, reviewed lesson content.
+Strokes makes one Hindi letter available for tracing, retrying, and checking the whole character. Success means reliable local interaction and honest feedback against original, reviewed lesson content.
 
 ## Operating Context
 
@@ -21,10 +21,10 @@ The writing surface must work on a phone, allow page scrolling outside the pad, 
 ## Capabilities and Constraints
 
 - Void and React own the app; deterministic geometry stays independent. Effect owns parsing boundaries, external work, and typed failures when needed.
-- The checked-in lesson owns the teaching sequence. React owns the temporary attempt. There are no accounts, uploads, durable progress, analytics, or database.
-- One original letter comes first. The specific letter and reviewed sequence are open; any development fixture must carry an explicit unreviewed label.
-- Clear and Retry reset the exercise. Reveal shows ordered reference strokes without accepting input or completing practice.
-- Stroke direction, position, and scale matter. Tolerances remain provisional until original finger and stylus recordings support calibration.
+- The checked-in lesson owns the reference geometry. React owns the temporary attempt. There are no accounts, uploads, durable progress, analytics, or database.
+- One original letter comes first. The specific letter and reviewed shape are open; any development fixture must carry an explicit unreviewed label.
+- Check compares the whole character to its guide; Retry resets the exercise. The faint whole-letter guide stays visible throughout practice.
+- The overall character shape matters; stroke order and direction are unrestricted. Tolerances remain provisional until original finger and stylus recordings support calibration.
 
 ## Brand Commitments
 

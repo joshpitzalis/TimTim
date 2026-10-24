@@ -1,12 +1,11 @@
 import { Schema } from "effect";
 import type { PointerEvent, RefObject } from "react";
-import { FINITE, LABEL } from "./utils/constraints";
+import { FINITE } from "./utils/constraints";
 
 export const Point = Schema.Struct({ x: FINITE, y: FINITE });
 export interface Point extends Schema.Schema.Type<typeof Point> {}
 
 export const REFERENCE_STROKE = Schema.Struct({
-	hint: LABEL,
 	points: Schema.NonEmptyArray(Point).check(
 		Schema.makeFilter((points) => {
 			const length = points.reduce((total, point, index) => {
@@ -27,7 +26,7 @@ export interface ActiveStroke extends Schema.Schema.Type<typeof ActiveStroke> {}
 export const Attempt = Schema.Struct({
 	strokes: Schema.Array(Schema.Array(Point)),
 	active: Schema.NullOr(ActiveStroke),
-	feedback: Schema.Literals(["ready", "drawing", "interrupted"]),
+	feedback: Schema.Literals(["ready", "drawing", "interrupted", "correct", "incorrect"]),
 });
 export interface Attempt extends Schema.Schema.Type<typeof Attempt> {}
 
@@ -54,9 +53,8 @@ export const Drawing = Schema.Struct({
 	padRef: PadRef,
 	ready: Schema.Boolean,
 	attempt: Attempt,
-	revealed: Schema.Boolean,
 	reset: Action,
-	reveal: Action,
+	check: Action,
 	abort: Action,
 	onPointerDown: PointerHandler,
 	onPointerMove: PointerHandler,

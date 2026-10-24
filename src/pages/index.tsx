@@ -21,10 +21,9 @@ export default function HomePage() {
 }
 
 export function PracticeArea({ lesson }: { readonly lesson: Lesson }) {
-	const drawing = useDrawing();
+	const drawing = useDrawing(lesson);
 	const feedback = feedbackMessage({
 		attempt: drawing.attempt,
-		revealed: drawing.revealed,
 		ready: drawing.ready,
 	});
 
@@ -46,22 +45,21 @@ export function PracticeArea({ lesson }: { readonly lesson: Lesson }) {
 						attempt={drawing.attempt}
 						padRef={drawing.padRef}
 						ready={drawing.ready}
-						revealed={drawing.revealed}
 						onPointerDown={drawing.onPointerDown}
 						onPointerMove={drawing.onPointerMove}
 						onPointerUp={drawing.onPointerUp}
 						onPointerCancel={drawing.onPointerCancel}
 						onLostPointerCapture={drawing.onLostPointerCapture}
 					/>
-					<Feedback message={feedback} />
+					<Feedback message={feedback} outcome={drawing.attempt.feedback} />
 					<Controls
 						ready={drawing.ready}
-						revealed={drawing.revealed}
+						canCheck={drawing.attempt.strokes.length > 0 && !drawing.attempt.active}
+						onCheck={drawing.check}
 						onReset={drawing.reset}
-						onReveal={drawing.reveal}
 					/>
 				</section>
-				<Explainer lesson={lesson} revealed={drawing.revealed} />
+				<Explainer />
 			</div>
 		</main>
 	);

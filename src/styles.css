@@ -12,6 +12,10 @@
   --color-accent-dark: #17349e;
   --color-accent-soft: #e3e9ff;
   --color-accent-pressed: #d3ddff;
+  --color-success: #166534;
+  --color-success-soft: #e5f5e9;
+  --color-retry: #a52626;
+  --color-retry-soft: #fceaea;
   --breakpoint-desktop: 760.01px;
 }
 

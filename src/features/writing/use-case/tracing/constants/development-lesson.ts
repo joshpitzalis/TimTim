@@ -6,7 +6,6 @@ export const DEVELOPMENT_LESSON = {
 	bounds: { x: 0, y: 0, width: 100, height: 100 },
 	strokes: [
 		{
-			hint: "Start low on the left. Curve up and around to meet the right stem.",
 			points: [
 				{ x: 38, y: 73 },
 				{ x: 30, y: 66 },
@@ -23,14 +22,12 @@ export const DEVELOPMENT_LESSON = {
 			],
 		},
 		{
-			hint: "Draw the right stem from top to bottom.",
 			points: [
 				{ x: 67, y: 25 },
 				{ x: 67, y: 76 },
 			],
 		},
 		{
-			hint: "Draw the headline from left to right.",
 			points: [
 				{ x: 22, y: 25 },
 				{ x: 77, y: 25 },

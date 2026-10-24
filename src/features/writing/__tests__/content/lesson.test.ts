@@ -5,7 +5,7 @@ import { ErrorBox } from "../../../../pages/index";
 import { DEVELOPMENT_LESSON } from "../../use-case/tracing/constants/development-lesson";
 import { parseLesson } from "../../use-case/tracing/helpers";
 
-test("the original development lesson parses with honest review status and ordered strokes", () => {
+test("the original development lesson parses with honest review status and reference geometry", () => {
 	const result = parseLesson(DEVELOPMENT_LESSON);
 	expect(result.kind).toBe("ready");
 	if (result.kind !== "ready") throw new Error("Development lesson did not parse");
@@ -57,19 +57,17 @@ test("unusable content fails before interaction instead of becoming handwriting 
 	}
 });
 
-test("the content boundary preserves the authored teaching order", () => {
+test("the content boundary preserves the reference geometry", () => {
 	const result = parseLesson({
 		...DEVELOPMENT_LESSON,
 		strokes: [
 			{
-				hint: "Right to left",
 				points: [
 					{ x: 70, y: 20 },
 					{ x: 40, y: 20 },
 				],
 			},
 			{
-				hint: "Down",
 				points: [
 					{ x: 10, y: 30 },
 					{ x: 10, y: 70 },
@@ -78,7 +76,7 @@ test("the content boundary preserves the authored teaching order", () => {
 		],
 	});
 	expect(result.kind).toBe("ready");
-	if (result.kind !== "ready") throw new Error("Authored sequence did not parse");
+	if (result.kind !== "ready") throw new Error("Reference geometry did not parse");
 	expect(result.lesson.strokes.map((stroke) => stroke.points[0])).toEqual([
 		{ x: 70, y: 20 },
 		{ x: 10, y: 30 },

@@ -1,4 +1,5 @@
 import { test, expect } from "./fixtures";
+import { DEVELOPMENT_LESSON } from "../../use-case/tracing/constants/development-lesson";
 import type { Locator } from "@playwright/test";
 
 async function inkScreenshot(pad: Locator): Promise<{ readonly count: number; readonly bounds: { readonly left: number; readonly top: number; readonly right: number; readonly bottom: number } }> {
@@ -57,28 +58,34 @@ test("shows live local ink, separate gestures, and a clear tracing-only reset", 
   await page.mouse.move(bounds.x + bounds.width * 0.65, bounds.y + bounds.height * 0.7, { steps: 6 });
   await page.mouse.up();
   await expect(page.getByRole("status")).toContainText("2 strokes drawn");
-  await page.getByRole("button", { name: "Clear", exact: true }).click();
+  await page.getByRole("button", { name: "Retry", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("Ready to trace");
   expect(await inkPixels(pad)).toBe(0);
 });
 
-test("Reveal exposes ordered direction hints without checking or completing, and repeated Retry resets it", async ({ page }) => {
+test("whole-letter guidance has no reveal or ordered hints, and Retry resets ink", async ({ page }) => {
   await page.goto("/");
-  const reveal = page.getByRole("button", { name: "Reveal", exact: true });
-  await reveal.click();
-  await expect(reveal).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByRole("listitem")).toHaveCount(3);
-  await expect(page.getByText("Tracing only. Your writing is not checked or scored.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("status")).toHaveText("Reference shown. Trace along it, or choose Retry for the faint guide.");
+  await expect(page.getByRole("status")).toContainText("Ready to trace");
+  await expect(page.getByRole("button", { name: "Reveal", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Focus on the whole letter" })).toBeVisible();
+  await expect(page.getByText(/in any stroke order/)).toBeVisible();
+  await expect(page.getByRole("listitem")).toHaveCount(0);
+  const pad = page.getByRole("img", { name: "Hindi writing practice area" });
+  const bounds = await pad.boundingBox();
+  if (!bounds) throw new Error("No writing pad");
+  await page.mouse.move(bounds.x + 40, bounds.y + 40);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x + 100, bounds.y + 100, { steps: 5 });
+  await page.mouse.up();
+  await expect(page.getByRole("status")).toContainText("1 stroke drawn");
   for (let repeat = 0; repeat < 2; repeat++) {
     await page.getByRole("button", { name: "Retry", exact: true }).click();
-    await expect(reveal).toHaveAttribute("aria-pressed", "false");
     await expect(page.getByRole("status")).toContainText("Ready to trace");
-    await reveal.click();
+    expect(await inkPixels(pad)).toBe(0);
   }
 });
 
-for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout shift", "Clear", "Retry"] as const) {
+for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout shift", "Retry"] as const) {
   test(`${interruption} discards unfinished ink and permits the next gesture`, async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("status")).toContainText("Ready to trace");
@@ -113,11 +120,11 @@ for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout 
       await pad.evaluate((element) => { element.style.transform = "translateY(20px)"; });
       await page.mouse.move(start.x + 180, start.y + 60);
     }
-    if (interruption === "Clear" || interruption === "Retry") {
+    if (interruption === "Retry") {
       await page.getByRole("button", { name: interruption, exact: true }).focus();
       await page.keyboard.press("Enter");
     }
-    await expect(page.getByRole("status")).toContainText(interruption === "Clear" || interruption === "Retry" ? "Ready to trace" : "Stroke interrupted");
+    await expect(page.getByRole("status")).toContainText(interruption === "Retry" ? "Ready to trace" : "Stroke interrupted");
     await page.mouse.up();
     if (interruption === "cancel" || interruption === "capture loss" || interruption === "blur") {
       // Pixel coverage tolerates subpixel rasterization while detecting leftover unfinished ink.
@@ -137,7 +144,7 @@ for (const interruption of ["cancel", "capture loss", "blur", "resize", "layout 
     await page.mouse.down();
     await page.mouse.move(nextBounds.x + 80, nextBounds.y + 80, { steps: 4 });
     await page.mouse.up();
-    await expect(page.getByRole("status")).toContainText(interruption === "Clear" || interruption === "Retry" ? "1 stroke drawn" : "2 strokes drawn");
+    await expect(page.getByRole("status")).toContainText(interruption === "Retry" ? "1 stroke drawn" : "2 strokes drawn");
   });
 }
 
@@ -179,14 +186,60 @@ test("phone layout supports drawing, reset, and visible keyboard focus", async (
   await expect(page.getByRole("status")).toContainText("1 stroke drawn");
   expect(await inkPixels(pad)).toBeGreaterThan(100);
   await page.keyboard.press("Tab");
-  const clear = page.getByRole("button", { name: "Clear", exact: true });
+  const clear = page.getByRole("button", { name: "Check", exact: true });
   await expect(clear).toBeFocused();
   expect(await clear.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe("solid");
+  await page.keyboard.press("Tab");
+  const retry = page.getByRole("button", { name: "Retry", exact: true });
+  await expect(retry).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status")).toContainText("Ready to trace");
   expect(await inkPixels(pad)).toBe(0);
-  await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: "Reveal", exact: true })).toBeFocused();
-  await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeFocused();
 });
+
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  test(`Check gives whole-character feedback and Retry resets it (${reducedMotion})`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    if (reducedMotion === "reduce") await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await expect(page.getByRole("status")).toContainText("Ready to trace");
+    const check = page.getByRole("button", { name: "Check", exact: true });
+    const retry = page.getByRole("button", { name: "Retry", exact: true });
+    await expect(check).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Clear", exact: true })).toHaveCount(0);
+    const pad = page.getByRole("img", { name: "Hindi writing practice area" });
+    const bounds = await pad.boundingBox();
+    if (!bounds) throw new Error("No pad");
+    await page.mouse.move(bounds.x + 20, bounds.y + 20);
+    await page.mouse.down();
+    await expect(check).toBeDisabled();
+    await page.mouse.move(bounds.x + 80, bounds.y + 20, { steps: 6 });
+    await page.mouse.up();
+    await check.click();
+    await expect(page.getByRole("status")).toContainText("Not quite yet");
+    await expect.poll(() => pad.evaluate((element) => getComputedStyle(element.parentElement ?? element).backgroundColor)).toBe("rgb(252, 234, 234)");
+    if (reducedMotion === "reduce") expect(await pad.evaluate((element) => element.parentElement?.getAnimations({ subtree: true }).length)).toBe(0);
+    await retry.click();
+    for (const stroke of [...DEVELOPMENT_LESSON.strokes].reverse()) {
+      const points = [...stroke.points].reverse();
+      for (const [index, point] of points.entries()) {
+        await page.mouse.move(bounds.x + point.x / 100 * bounds.width, bounds.y + point.y / 100 * bounds.height);
+        if (index === 0) await page.mouse.down();
+      }
+      await page.mouse.up();
+    }
+    await check.click();
+    await expect(page.getByRole("status")).toContainText("That’s it! You matched the letter.");
+    await expect.poll(() => pad.evaluate((element) => getComputedStyle(element.parentElement ?? element).backgroundColor)).toBe("rgb(229, 245, 233)");
+    expect(await inkPixels(pad)).toBeGreaterThan(100);
+    if (reducedMotion === "reduce") {
+      expect(await pad.evaluate((element) => element.parentElement?.getAnimations({ subtree: true }).length)).toBe(0);
+      expect(await page.getByRole("status").evaluate((element) => element.getAnimations({ subtree: true }).length)).toBe(0);
+    }
+    await retry.click();
+    await expect.poll(() => pad.evaluate((element) => getComputedStyle(element.parentElement ?? element).backgroundColor)).toBe("rgb(255, 255, 255)");
+    await expect(page.getByRole("status")).toContainText("Ready to trace");
+    await expect(check).toBeDisabled();
+    expect(await inkPixels(pad)).toBe(0);
+  });
+}

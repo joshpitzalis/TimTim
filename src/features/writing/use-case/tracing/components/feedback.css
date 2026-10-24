@@ -1,0 +1,104 @@
+@keyframes letter-check {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes letter-retry {
+  from {
+    transform: rotate(-50deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}
+
+[data-writing-result="correct"] {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+[data-writing-result="incorrect"] {
+  background-color: var(--color-retry-soft);
+  color: var(--color-retry);
+}
+
+[data-writing-result="correct"] > svg {
+  border-color: var(--color-success);
+}
+
+[data-writing-result="incorrect"] > svg {
+  border-color: var(--color-retry);
+}
+
+[data-writing-feedback="correct"] {
+  color: var(--color-success);
+  font-weight: 650;
+}
+
+[data-writing-feedback="incorrect"] {
+  color: var(--color-retry);
+  font-weight: 650;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-writing-result="correct"] {
+    animation: canvas-celebrate 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-writing-result="incorrect"] {
+    animation: canvas-retry 500ms ease-out;
+  }
+
+  [data-writing-result="incorrect"] > div {
+    animation: canvas-nudge 360ms ease-out;
+  }
+}
+
+@keyframes canvas-celebrate {
+  0% {
+    background-color: #bde8c9;
+  }
+  100% {
+    background-color: var(--color-success-soft);
+  }
+}
+
+@keyframes canvas-retry {
+  from {
+    background-color: #f4caca;
+  }
+  to {
+    background-color: var(--color-retry-soft);
+  }
+}
+
+@keyframes canvas-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  55% {
+    transform: translateX(4px);
+  }
+  80% {
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes result-stamp {
+  from {
+    transform: translateY(6px) scale(0.65) rotate(-12deg);
+  }
+  to {
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}

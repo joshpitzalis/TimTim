@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import type { PointerEvent } from "react";
+import type { Lesson } from "../../../domain/lessons";
 import type { Capture, Drawing } from "../../../domain/strokes";
 import { sameMatrix, toPoint } from "../helpers";
 import { INITIAL_SESSION, reduceSession } from "../helpers/session";
 
-export function useDrawing(): Drawing {
+export function useDrawing(lesson: Lesson): Drawing {
 	const padRef = useRef<SVGSVGElement>(null);
 	const captureRef = useRef<Capture | null>(null);
 	const [ready, setReady] = useState(false);
@@ -90,19 +91,14 @@ export function useDrawing(): Drawing {
 		dispatch({ type: "reset" });
 	}
 
-	function reveal(): void {
-		const interrupt = captureRef.current !== null;
-		if (interrupt) release();
-		dispatch({ type: "reveal", interrupt });
-	}
-
 	return {
 		padRef,
 		ready,
 		attempt: session.attempt,
-		revealed: session.revealed,
 		reset,
-		reveal,
+		check: () => {
+			if (ready && !captureRef.current) dispatch({ type: "check", lesson });
+		},
 		abort,
 		onPointerDown,
 		onPointerMove,

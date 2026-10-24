@@ -76,7 +76,7 @@ components:
 
 **Creative North Star: "Printmaker's proof"**
 
-A cool white working field, cobalt ink, registration corners, and explicit directed-stroke proofs. The user delegated the visual choice on 2026-10-22. The reference metaphor explains aligned drawing and repeated attempts; it introduces no printing terminology into learner instructions.
+A cool white working field, cobalt ink, registration corners, and a faint whole-letter reference. The user delegated the visual choice on 2026-10-22. The reference metaphor explains aligned drawing and repeated attempts; it introduces no printing terminology into learner instructions.
 
 ## Colors
 
@@ -84,7 +84,7 @@ White owns the writing surface; a cool neutral ground separates the workspace fr
 
 ## Typography
 
-Use system sans for controls and instructions, with readable fixed rem sizes. Pronunciation uses the title size on phones. The lesson glyph and reference paths carry the visual identity. Use the platform Devanagari fallback for the glyph label; the actual teaching paths are authored SVG geometry, never a font outline. Numbered SVG hints use four lesson-coordinate units, scaling with the drawing frame.
+Use system sans for controls and instructions, with readable fixed rem sizes. Pronunciation uses the title size on phones. The lesson glyph and reference paths carry the visual identity. Use the platform Devanagari fallback for the glyph label; the actual teaching paths are authored SVG geometry, never a font outline.
 
 ## Layout
 
@@ -100,7 +100,7 @@ Keep the pad geometrically square with modest corner treatment. Controls have co
 
 ## Components
 
-The pad is a real SVG with a shared lesson coordinate system. Reference geometry is faint; learner ink is cobalt. Reveal exposes numbered directed reference strokes without marking a stroke accepted or completing practice; the learner may trace over the revealed reference. Buttons use text labels, visible focus, hover and pressed states. They have a minimum touch height of 48px; preparation disables them visibly. Feedback uses readable text with a stable position to avoid layout movement during drawing.
+The pad is a real SVG with a shared lesson coordinate system. Reference geometry is faint; learner ink is cobalt. The whole-letter guide stays faint throughout practice, with no numbered strokes or direction arrows. Buttons use text labels, visible focus, hover and pressed states. They have a minimum touch height of 48px; preparation disables them visibly. Feedback uses readable text with a stable position to avoid layout movement during drawing.
 
 ## Do's and Don'ts
 
