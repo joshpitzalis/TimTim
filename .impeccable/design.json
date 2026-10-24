@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T05:37:28.158120+00:00",
+  "title": "Design System: Strokes",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "canonical": "#2348d1",
+        "tonalRamp": [
+          "oklch(15% 0.2 265)",
+          "oklch(27% 0.2 265)",
+          "oklch(39% 0.2 265)",
+          "oklch(51% 0.2 265)",
+          "oklch(63% 0.2 265)",
+          "oklch(75% 0.2 265)",
+          "oklch(87% 0.2 265)",
+          "oklch(95% 0.2 265)"
+        ]
+      },
+      "primary-deep": {
+        "role": "primary",
+        "displayName": "Primary Deep",
+        "canonical": "#17349e",
+        "tonalRamp": [
+          "oklch(15% 0.18 265)",
+          "oklch(27% 0.18 265)",
+          "oklch(39% 0.18 265)",
+          "oklch(51% 0.18 265)",
+          "oklch(63% 0.18 265)",
+          "oklch(75% 0.18 265)",
+          "oklch(87% 0.18 265)",
+          "oklch(95% 0.18 265)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ground",
+        "canonical": "#edf1f6",
+        "tonalRamp": [
+          "oklch(15% 0.015 265)",
+          "oklch(27% 0.015 265)",
+          "oklch(39% 0.015 265)",
+          "oklch(51% 0.015 265)",
+          "oklch(63% 0.015 265)",
+          "oklch(75% 0.015 265)",
+          "oklch(87% 0.015 265)",
+          "oklch(95% 0.015 265)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0 265)",
+          "oklch(27% 0 265)",
+          "oklch(39% 0 265)",
+          "oklch(51% 0 265)",
+          "oklch(63% 0 265)",
+          "oklch(75% 0 265)",
+          "oklch(87% 0 265)",
+          "oklch(95% 0 265)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#15223b",
+        "tonalRamp": [
+          "oklch(15% 0.04 265)",
+          "oklch(27% 0.04 265)",
+          "oklch(39% 0.04 265)",
+          "oklch(51% 0.04 265)",
+          "oklch(63% 0.04 265)",
+          "oklch(75% 0.04 265)",
+          "oklch(87% 0.04 265)",
+          "oklch(95% 0.04 265)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#526079",
+        "tonalRamp": [
+          "oklch(15% 0.04 265)",
+          "oklch(27% 0.04 265)",
+          "oklch(39% 0.04 265)",
+          "oklch(51% 0.04 265)",
+          "oklch(63% 0.04 265)",
+          "oklch(75% 0.04 265)",
+          "oklch(87% 0.04 265)",
+          "oklch(95% 0.04 265)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#c9d3e3",
+        "tonalRamp": [
+          "oklch(15% 0.025 265)",
+          "oklch(27% 0.025 265)",
+          "oklch(39% 0.025 265)",
+          "oklch(51% 0.025 265)",
+          "oklch(63% 0.025 265)",
+          "oklch(75% 0.025 265)",
+          "oklch(87% 0.025 265)",
+          "oklch(95% 0.025 265)"
+        ]
+      },
+      "guide": {
+        "role": "primary",
+        "displayName": "Guide",
+        "canonical": "#c6d2f6",
+        "tonalRamp": [
+          "oklch(15% 0.08 265)",
+          "oklch(27% 0.08 265)",
+          "oklch(39% 0.08 265)",
+          "oklch(51% 0.08 265)",
+          "oklch(63% 0.08 265)",
+          "oklch(75% 0.08 265)",
+          "oklch(87% 0.08 265)",
+          "oklch(95% 0.08 265)"
+        ]
+      },
+      "grid": {
+        "role": "neutral",
+        "displayName": "Grid",
+        "canonical": "#dce3ee",
+        "tonalRamp": [
+          "oklch(15% 0.02 265)",
+          "oklch(27% 0.02 265)",
+          "oklch(39% 0.02 265)",
+          "oklch(51% 0.02 265)",
+          "oklch(63% 0.02 265)",
+          "oklch(75% 0.02 265)",
+          "oklch(87% 0.02 265)",
+          "oklch(95% 0.02 265)"
+        ]
+      },
+      "primary-soft": {
+        "role": "primary",
+        "displayName": "Primary Soft",
+        "canonical": "#e3e9ff",
+        "tonalRamp": [
+          "oklch(15% 0.055 265)",
+          "oklch(27% 0.055 265)",
+          "oklch(39% 0.055 265)",
+          "oklch(51% 0.055 265)",
+          "oklch(63% 0.055 265)",
+          "oklch(75% 0.055 265)",
+          "oklch(87% 0.055 265)",
+          "oklch(95% 0.055 265)"
+        ]
+      },
+      "primary-pressed": {
+        "role": "primary",
+        "displayName": "Primary Pressed",
+        "canonical": "#d3ddff",
+        "tonalRamp": [
+          "oklch(15% 0.07 265)",
+          "oklch(27% 0.07 265)",
+          "oklch(39% 0.07 265)",
+          "oklch(51% 0.07 265)",
+          "oklch(63% 0.07 265)",
+          "oklch(75% 0.07 265)",
+          "oklch(87% 0.07 265)",
+          "oklch(95% 0.07 265)"
+        ]
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Reveal button",
+      "kind": "button",
+      "html": "<button type=\"button\">Reveal</button>",
+      "css": "button { font: 600 16px system-ui, sans-serif; min-height:48px; padding:10px 16px; border:1px solid #2348d1; border-radius:8px; background:#2348d1; color:white; cursor:pointer; } button:hover { background:#17349e; } button:focus-visible { outline:3px solid #15223b; outline-offset:4px; } button:disabled { opacity:.5; cursor:wait; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Printmaker's proof",
+    "overview": "A cool white working field, cobalt ink, registration corners, and explicit directed-stroke proofs. The user delegated the visual choice on 2026-10-22. The reference metaphor explains aligned drawing and repeated attempts; it introduces no printing terminology into learner instructions.",
+    "rules": [],
+    "dos": [
+      "Do prioritize the pad under ordinary indoor and daylight phone use.",
+      "Do keep human review and development-fixture status honest and readable.",
+      "Do use semantic HTML and SVG for all instructions, controls, and drawing."
+    ],
+    "donts": [
+      "Don't add streaks, scores, mastery claims, a lesson catalog, or persistent history.",
+      "Don't use imagery or animation where it would compete with the drawing task."
+    ]
+  }
+}
