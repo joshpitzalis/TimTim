@@ -44,7 +44,14 @@ for (const viewport of [
 			await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 			await expect(page.getByRole("status")).toContainText("1 stroke drawn");
 			expect(await page.evaluate(() => window.scrollY)).toBe(0);
-			await retry.tap();
+			await retry.scrollIntoViewIfNeeded();
+			const target = await retry.boundingBox();
+			if (!target) throw new Error("Retry has no bounds");
+			await touch.send("Input.dispatchTouchEvent", {
+				type: "touchStart",
+				touchPoints: [{ x: target.x + target.width / 2, y: target.y + target.height / 2 }],
+			});
+			await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 			await expect(page.getByRole("status")).toContainText("Ready to trace");
 			await page.screenshot({ path: testInfo.outputPath("mobile-practice.png"), fullPage: true });
 		});
