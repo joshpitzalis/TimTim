@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import type { PointerEvent } from "react";
+import type { Assessment } from "../helpers/assessment";
 import type { Lesson } from "../../../domain/lessons";
 import type { Capture, Drawing } from "../../../domain/strokes";
 import { sameMatrix, toPoint } from "../helpers";
 import { INITIAL_SESSION, reduceSession } from "../helpers/session";
 
-export function useDrawing(lesson: Lesson): Drawing {
+interface AssessedDrawing extends Drawing {
+	readonly assessment: Assessment | null;
+}
+
+export function useDrawing(lesson: Lesson): AssessedDrawing {
 	const padRef = useRef<SVGSVGElement>(null);
 	const captureRef = useRef<Capture | null>(null);
 	const [ready, setReady] = useState(false);
@@ -95,6 +100,7 @@ export function useDrawing(lesson: Lesson): Drawing {
 		padRef,
 		ready,
 		attempt: session.attempt,
+		assessment: session.assessment,
 		reset,
 		check: () => {
 			if (ready && !captureRef.current) dispatch({ type: "check", lesson });

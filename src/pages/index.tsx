@@ -24,6 +24,7 @@ export function PracticeArea({ lesson }: { readonly lesson: Lesson }) {
 	const drawing = useDrawing(lesson);
 	const feedback = feedbackMessage({
 		attempt: drawing.attempt,
+		assessment: drawing.assessment,
 		ready: drawing.ready,
 	});
 

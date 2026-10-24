@@ -1,4 +1,6 @@
 export { parseLesson } from "./helpers";
+export { assessLetter, PROVISIONAL_TOLERANCE } from "./helpers/assessment";
+export type { Assessment, Tolerance } from "./helpers/assessment";
 export { checkCharacter } from "./helpers/check-character";
 export { feedbackMessage } from "./helpers/session";
 export { useDrawing } from "./hooks/use-drawing";

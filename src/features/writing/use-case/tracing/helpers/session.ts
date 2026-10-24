@@ -1,13 +1,15 @@
-import { checkCharacter } from "./check-character";
+import { assessLetter } from "./assessment";
+import type { Assessment } from "./assessment";
 import type { Lesson } from "../../../domain/lessons";
 import type { Attempt, Point } from "../../../domain/strokes";
 import { EMPTY } from "./index";
 
 export interface Session {
 	readonly attempt: Attempt;
+	readonly assessment: Assessment | null;
 }
 
-export const INITIAL_SESSION: Session = { attempt: EMPTY };
+export const INITIAL_SESSION: Session = { attempt: EMPTY, assessment: null };
 
 export type SessionAction =
 	| { readonly type: "start"; readonly pointerId: number; readonly point: Point }
@@ -22,6 +24,7 @@ export function reduceSession(session: Session, action: SessionAction): Session 
 		case "start":
 			return {
 				...session,
+				assessment: null,
 				attempt: {
 					...session.attempt,
 					active: { pointerId: action.pointerId, points: [action.point] },
@@ -60,26 +63,29 @@ export function reduceSession(session: Session, action: SessionAction): Session 
 				...session,
 				attempt: { ...session.attempt, active: null, feedback: "interrupted" },
 			};
-		case "check":
+		case "check": {
 			if (session.attempt.active || session.attempt.strokes.length === 0) return session;
+			const assessment = assessLetter(action.lesson, session.attempt.strokes);
 			return {
 				...session,
+				assessment,
 				attempt: {
 					...session.attempt,
-					feedback: checkCharacter(action.lesson, session.attempt.strokes)
-						? "correct"
-						: "incorrect",
+					feedback:
+						assessment.kind === "passed"
+							? "correct"
+							: assessment.kind === "retry"
+								? "incorrect"
+								: "ready",
 				},
 			};
+		}
 		case "reset":
 			return INITIAL_SESSION;
 	}
 }
 
-export function feedbackMessage(input: {
-	readonly attempt: Attempt;
-	readonly ready: boolean;
-}): string {
+export function feedbackMessage(input: Session & { readonly ready: boolean }): string {
 	const count = input.attempt.strokes.length;
 	let feedback = "Ready to trace. Follow the faint guide.";
 	if (count > 0)
@@ -91,6 +97,14 @@ export function feedbackMessage(input: {
 	if (input.attempt.feedback === "correct") feedback = "That’s it! You matched the letter.";
 	if (input.attempt.feedback === "incorrect")
 		feedback = "Not quite yet. Follow the whole shape and try again.";
+	if (input.assessment?.kind === "retry") {
+		feedback += [
+			input.assessment.missing ? " Some parts are missing." : "",
+			input.assessment.stray ? " Keep closer to the guide." : "",
+		].join("");
+	}
+	if (input.assessment?.kind === "unavailable")
+		feedback = "Checking is unavailable. Choose Retry to try again.";
 	if (!input.ready) feedback = "Preparing the writing area…";
 	return feedback;
 }

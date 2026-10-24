@@ -52,3 +52,15 @@ test("rejects empty, incomplete, misplaced, and extra ink", () => {
 		]),
 	).toBe(false);
 });
+
+test("the public checker does not let correct retracing hide an extra line", () => {
+	const messy = [
+		...reference,
+		[
+			{ x: 10, y: 90 },
+			{ x: 90, y: 10 },
+		],
+	];
+	const retraced = [...messy, ...Array.from({ length: 40 }, () => reference).flat()];
+	expect(checkCharacter(lesson, retraced)).toBe(false);
+});

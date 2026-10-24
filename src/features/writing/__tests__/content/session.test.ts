@@ -86,3 +86,49 @@ test("checking ignores empty and active attempts, and drawing or retry clears th
 	);
 	expect(reduceSession(checked, { type: "reset" })).toBe(INITIAL_SESSION);
 });
+
+test("checking retains ink, while a later cancelled edit clears the old result", async () => {
+	const { DEVELOPMENT_LESSON } =
+		await import("../../use-case/tracing/constants/development-lesson");
+	const { parseLesson } = await import("../../use-case/tracing/helpers");
+	const content = parseLesson(DEVELOPMENT_LESSON);
+	if (content.kind !== "ready") throw new Error("Invalid fixture");
+	let session = INITIAL_SESSION;
+	for (const stroke of content.lesson.strokes) {
+		const [first, ...rest] = stroke.points;
+		session = reduceSession(session, { type: "start", pointerId: 1, point: first });
+		for (const point of rest) session = reduceSession(session, { type: "extend", point });
+		const last = stroke.points.at(-1);
+		if (!last) throw new Error("Missing endpoint");
+		session = reduceSession(session, { type: "commit", point: last });
+	}
+	const checked = reduceSession(session, { type: "check", lesson: content.lesson });
+	expect(checked.assessment).toEqual({ kind: "passed" });
+	expect(checked.attempt.strokes).toBe(session.attempt.strokes);
+	expect(checked.attempt.feedback).toBe("correct");
+	expect(reduceSession(checked, { type: "check", lesson: content.lesson }).assessment).toEqual(
+		checked.assessment,
+	);
+	const edited = reduceSession(checked, { type: "start", pointerId: 1, point: a });
+	expect(edited.assessment).toBeNull();
+	expect(reduceSession(edited, { type: "check", lesson: content.lesson })).toBe(edited);
+	const interrupted = reduceSession(edited, { type: "interrupt" });
+	expect(interrupted.assessment).toBeNull();
+	expect(interrupted.attempt.strokes).toEqual(checked.attempt.strokes);
+	expect(reduceSession(checked, { type: "reset" }).assessment).toBeNull();
+});
+
+test("checking failures stay distinct from learner retries and result colors", () => {
+	const content = parseLesson(DEVELOPMENT_LESSON);
+	if (content.kind !== "ready") throw new Error("Invalid lesson");
+	const invalid = apply([
+		{ type: "start", pointerId: 1, point: { x: Infinity, y: 20 } },
+		{ type: "commit", point: b },
+	]);
+	const checked = reduceSession(invalid, { type: "check", lesson: content.lesson });
+	expect(checked.assessment).toEqual({ kind: "unavailable" });
+	expect(checked.attempt.feedback).toBe("ready");
+	expect(feedbackMessage({ ...checked, ready: true })).toBe(
+		"Checking is unavailable. Choose Retry to try again.",
+	);
+});
